@@ -26,8 +26,11 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout
+      - name: Checkout latest main
         uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -60,7 +63,25 @@ jobs:
             git add data/updates.json docs/data/updates.json
             LATEST=$(python -c "import json; print(json.load(open('data/updates.json', encoding='utf-8'))['latest_kb'])")
             git commit -m "data: refresh Windows 11 25H2 history (${LATEST})"
-            git push
+
+            # A queued/manual run may have started from an older commit.
+            # Rebase onto the latest remote main before pushing.
+            for attempt in 1 2 3; do
+              git fetch origin main
+              if git rebase origin/main && git push origin HEAD:main; then
+                echo "Data commit pushed successfully."
+                break
+              fi
+
+              if [ "$attempt" -eq 3 ]; then
+                echo "Unable to push after 3 attempts."
+                exit 1
+              fi
+
+              git rebase --abort 2>/dev/null || true
+              echo "Remote main changed; retrying in 5 seconds..."
+              sleep 5
+            done
           fi
 
       - name: Configure Pages
