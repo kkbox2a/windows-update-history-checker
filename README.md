@@ -1,6 +1,6 @@
 # Windows Update History Checker
 
-**English** | [繁體中文](README.zh-TW.md)
+**🌐 English** | [繁體中文](README.zh-TW.md)
 
 Windows Update History Checker is an automation project built with **Python, GitHub Actions, and GitHub Pages**.
 
