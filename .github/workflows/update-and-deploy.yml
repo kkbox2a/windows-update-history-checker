@@ -39,7 +39,9 @@ jobs:
         run: pip install -r requirements.txt pytest
 
       - name: Run parser tests
-        run: pytest -q
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: python -m pytest -q
 
       - name: Fetch Microsoft update history
         run: python scripts/fetch_updates.py
