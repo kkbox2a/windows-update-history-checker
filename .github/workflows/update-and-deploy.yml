@@ -1,0 +1,74 @@
+name: Update Windows history and deploy Pages
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 0,6,12,18 * * *"
+  push:
+    branches: [main]
+    paths-ignore:
+      - "data/updates.json"
+      - "docs/data/updates.json"
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: windows-update-pages
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pytest
+
+      - name: Run parser tests
+        run: pytest -q
+
+      - name: Fetch Microsoft update history
+        run: python scripts/fetch_updates.py
+
+      - name: Validate generated data
+        run: python scripts/validate_data.py
+
+      - name: Commit data changes
+        shell: bash
+        run: |
+          if git diff --quiet -- data/updates.json docs/data/updates.json; then
+            echo "No update-history changes."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/updates.json docs/data/updates.json
+            LATEST=$(python -c "import json; print(json.load(open('data/updates.json', encoding='utf-8'))['latest_kb'])")
+            git commit -m "data: refresh Windows 11 25H2 history (${LATEST})"
+            git push
+          fi
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        environment:
+          name: github-pages
+          url: ${{ steps.deployment.outputs.page_url }}

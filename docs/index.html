@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b1220">
+  <title>Windows Update History Checker</title>
+  <link rel="icon" type="image/png" href="assets/app_icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <img class="logo" src="assets/app_icon.png" alt="">
+      <div>
+        <p class="eyebrow">MICROSOFT UPDATE TRACKER</p>
+        <h1>Windows 11 25H2<br>更新紀錄檢查器</h1>
+        <p class="subtitle">自動整理最新 KB、OS Build、MSU x64 下載連結與技術文件。</p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="status" class="status-card loading">正在載入更新資料…</section>
+
+    <section id="latest-section" class="section hidden">
+      <div class="section-heading">
+        <div><p class="eyebrow">LATEST UPDATE</p><h2>目前最新版本</h2></div>
+      </div>
+      <div id="latest-card"></div>
+    </section>
+
+    <section class="section">
+      <div class="section-heading controls-heading">
+        <div><p class="eyebrow">UPDATE ARCHIVE</p><h2>過往版本</h2></div>
+        <div class="controls">
+          <input id="search" type="search" placeholder="搜尋 KB、Build、日期…" aria-label="搜尋更新">
+          <select id="type-filter" aria-label="更新類型">
+            <option value="all">全部類型</option>
+            <option value="Security / Cumulative">正式更新</option>
+            <option value="Preview">Preview</option>
+            <option value="Out-of-band">Out-of-band</option>
+          </select>
+          <button id="copy-visible" class="button secondary">複製目前顯示項目</button>
+        </div>
+      </div>
+      <div id="result-count" class="result-count"></div>
+      <div id="updates" class="update-grid"></div>
+    </section>
+  </main>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+  <footer>資料來源：Microsoft Support 與 Microsoft Update Catalog。網站資料由 GitHub Actions 自動更新。</footer>
+  <script src="app.js"></script>
+</body>
+</html>

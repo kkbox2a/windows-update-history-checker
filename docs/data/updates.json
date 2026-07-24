@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "product": "Windows 11",
+  "version": "25H2",
+  "source_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2025/07/windows-11-version-25h2-update-history",
+  "generated_at": "2026-07-18T00:00:00+00:00",
+  "content_sha256": "seed-data-first-action-run-will-refresh",
+  "count": 1,
+  "latest_kb": "KB5121767",
+  "updates": [
+    {
+      "date": "July 18, 2026",
+      "kb": "KB5121767",
+      "builds": ["26200.8894", "26100.8894"],
+      "update_type": "Out-of-band",
+      "title": "July 18, 2026—KB5121767 (OS Builds 26200.8894 and 26100.8894) Out-of-band",
+      "support_url": "https://support.microsoft.com/en-us/help/5121767",
+      "technical_url": "https://support.microsoft.com/en-us/help/5121767",
+      "msu_x64_url": "",
+      "msu_status": "unavailable"
+    }
+  ]
+}
