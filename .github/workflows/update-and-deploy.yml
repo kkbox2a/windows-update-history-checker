@@ -50,7 +50,7 @@ jobs:
       - name: Fetch Microsoft update history
         env:
           PYTHONPATH: ${{ github.workspace }}
-        run: python scripts/fetch_updates_v2.py
+        run: python scripts/fetch_updates_v3.py
 
       - name: Validate generated data
         run: python scripts/validate_data.py
@@ -64,7 +64,7 @@ jobs:
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add data/updates.json docs/data/updates.json
-            LATEST=$(python -c "import json; print(json.load(open('data/updates.json', encoding='utf-8'))['latest_kb'])")
+            LATEST=$(python -c "import json; d=json.load(open('data/updates.json', encoding='utf-8')); print(f\"{d.get('latest_kb','')} / {d.get('latest_dev_build','')}\")")
             git commit -m "data: refresh Windows 11 update history (${LATEST})"
 
             for attempt in 1 2 3; do
