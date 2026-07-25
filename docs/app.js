@@ -57,7 +57,7 @@ function card(u,latest=false){
       </div>
       <span class="badge ${badgeClass(u.update_type)}">${escapeHtml(u.update_type)}</span>
     </div>
-    <div class="actions">${primaryAction}${secondaryAction}<button class="button ghost copy-md" data-id="${escapeHtml(u.id||u.kb||u.builds[0])}">複製 Discord MD</button></div>
+    <div class="actions">${primaryAction}${secondaryAction}<button class="button ghost copy-md" data-id="${escapeHtml(u.id||u.kb||u.builds[0])}">複製 Markdown</button></div>
   </article>`;
 }
 
