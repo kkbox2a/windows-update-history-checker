@@ -48,6 +48,7 @@ jobs:
         run: python -m pytest -q
 
       - name: Fetch Microsoft update history
+        if: github.event_name != 'push'
         env:
           PYTHONPATH: ${{ github.workspace }}
         run: python scripts/fetch_updates_v3.py
@@ -56,6 +57,7 @@ jobs:
         run: python scripts/validate_data.py
 
       - name: Commit data changes
+        if: github.event_name != 'push'
         shell: bash
         run: |
           if git diff --quiet -- data/updates.json docs/data/updates.json; then
