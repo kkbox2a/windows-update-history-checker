@@ -108,8 +108,13 @@ async function init(){
     state.data=normalizeData(await r.json());
     const stable=state.data.channels.stable;
     const dev=state.data.channels.dev;
+    const stableLatest=stable.updates?.[0];
+    const stableBuild=stableLatest?.builds?.find(build=>String(build).startsWith('26200.'))||stableLatest?.builds?.[0]||'';
+    const stableStatus=stable.latest_id
+      ?`${stable.latest_id}${stableBuild?` / Build ${stableBuild}`:''}`
+      :'尚無資料';
     $('status').className='status-card ok';
-    $('status').innerHTML=`<strong>資料已載入</strong><span>更新時間：${new Date(state.data.generated_at).toLocaleString('zh-TW')}</span><span>25H2：${escapeHtml(stable.latest_id||'尚無資料')}</span><span>26H2 Dev：${escapeHtml(dev.latest_id||'尚無資料')}</span>`;
+    $('status').innerHTML=`<strong>資料已載入</strong><span>更新時間：${new Date(state.data.generated_at).toLocaleString('zh-TW')}</span><span>25H2：${escapeHtml(stableStatus)}</span><span>26H2 Dev：${escapeHtml(dev.latest_id||'尚無資料')}</span>`;
     switchChannel('stable');
   }catch(e){$('status').className='status-card error';$('status').textContent=`資料載入失敗：${e.message}`}
 }
