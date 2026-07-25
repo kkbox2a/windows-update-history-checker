@@ -42,9 +42,16 @@ for item in dev["updates"]:
     assert all(build.startswith("26300.") for build in item["builds"])
     assert item["version"] == "26H2"
     assert item["update_type"] == "Dev / Experimental"
-    assert item["technical_url"].startswith("https://learn.microsoft.com/")
+    assert item["technical_url"].startswith((
+        "https://learn.microsoft.com/",
+        "https://blogs.windows.com/windows-insider/",
+    ))
     assert not item["msu_x64_url"]
     assert item["id"] not in dev_seen
     dev_seen.add(item["id"])
 
-print(f"validated stable={len(stable_seen)} and dev={len(dev_seen)} records")
+assert data["latest_dev_build"] == dev["latest_id"]
+print(
+    f"validated stable={len(stable_seen)} and dev={len(dev_seen)} records; "
+    f"latest_dev={data['latest_dev_build']}"
+)
