@@ -14,8 +14,8 @@
       <img class="logo" src="assets/app_icon.png" alt="">
       <div class="hero-copy">
         <p class="eyebrow">MICROSOFT UPDATE TRACKER</p>
-        <h1>Windows 11 25H2<br>更新紀錄檢查器</h1>
-        <p class="subtitle">自動整理最新 KB、OS Build、MSU x64 下載連結與技術文件。</p>
+        <h1>Windows 11<br>更新紀錄檢查器</h1>
+        <p class="subtitle">同時追蹤 25H2 正式版與 26H2 Dev / Experimental 測試版本。</p>
       </div>
       <a class="github-link" href="https://github.com/kkbox2a/windows-update-history-checker" target="_blank" rel="noopener noreferrer" aria-label="在 GitHub 開啟專案">
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -27,18 +27,29 @@
   </header>
 
   <main>
+    <nav class="channel-tabs" aria-label="Windows 更新頻道">
+      <button class="channel-tab active" data-channel="stable" type="button">
+        <span class="channel-tab-title">Windows 11 25H2</span>
+        <span class="channel-tab-subtitle">正式版</span>
+      </button>
+      <button class="channel-tab" data-channel="dev" type="button">
+        <span class="channel-tab-title">Windows 11 26H2</span>
+        <span class="channel-tab-subtitle">Dev / Experimental</span>
+      </button>
+    </nav>
+
     <section id="status" class="status-card loading">正在載入更新資料…</section>
 
     <section id="latest-section" class="section hidden">
       <div class="section-heading">
-        <div><p class="eyebrow">LATEST UPDATE</p><h2>目前最新版本</h2></div>
+        <div><p class="eyebrow">LATEST UPDATE</p><h2 id="latest-heading">目前最新版本</h2></div>
       </div>
       <div id="latest-card"></div>
     </section>
 
     <section class="section">
       <div class="section-heading controls-heading">
-        <div><p class="eyebrow">UPDATE ARCHIVE</p><h2>過往版本</h2></div>
+        <div><p class="eyebrow">UPDATE ARCHIVE</p><h2 id="archive-heading">過往版本</h2></div>
         <div class="controls">
           <input id="search" type="search" placeholder="搜尋 KB、Build、日期…" aria-label="搜尋更新">
           <select id="type-filter" aria-label="更新類型">
@@ -56,7 +67,7 @@
   </main>
 
   <div id="toast" role="status" aria-live="polite"></div>
-  <footer>資料來源：Microsoft Support 與 Microsoft Update Catalog。網站資料由 GitHub Actions 自動更新。</footer>
+  <footer>資料來源：Microsoft Support、Microsoft Update Catalog 與 Windows Insider Program。網站資料由 GitHub Actions 自動更新。</footer>
   <script src="app.js"></script>
 </body>
 </html>
