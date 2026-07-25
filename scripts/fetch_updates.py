@@ -17,11 +17,17 @@ from bs4 import BeautifulSoup
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "data" / "updates.json"
 WEB_DATA_FILE = ROOT / "docs" / "data" / "updates.json"
-SOURCE_URL = (
+
+STABLE_SOURCE_URL = (
     "https://support.microsoft.com/en-US/servicing/os/windows-11/2025/07/"
     "windows-11-version-25h2-update-history"
 )
-TARGET_VERSION = "25H2"
+INSIDER_INDEX_URL = "https://learn.microsoft.com/en-us/windows-insider/release-notes/"
+STABLE_VERSION = "25H2"
+INSIDER_VERSION = "26H2"
+INSIDER_BUILD_PREFIX = "26300."
+INSIDER_MIN_REVISION = 8697
+
 CATALOG_SEARCH_URL = "https://www.catalog.update.microsoft.com/Search.aspx?q={}"
 CATALOG_DOWNLOAD_URL = "https://www.catalog.update.microsoft.com/DownloadDialog.aspx"
 
@@ -39,14 +45,21 @@ UPDATE_RE = re.compile(
     r"(?P<suffix>.*)$",
     re.IGNORECASE,
 )
+INSIDER_LINK_RE = re.compile(
+    r"/windows-insider/release-notes/experimental/preview-build-(26300)-(\d+)(?:/)?$",
+    re.IGNORECASE,
+)
 
 
 @dataclass(frozen=True)
 class UpdateItem:
+    id: str
     date: str
     kb: str
     builds: list[str]
     update_type: str
+    channel: str
+    version: str
     title: str
     support_url: str
     technical_url: str
@@ -55,7 +68,7 @@ class UpdateItem:
 
     @property
     def key(self) -> str:
-        return f"{self.kb}|{'|'.join(self.builds)}|{self.date}"
+        return f"{self.id}|{'|'.join(self.builds)}|{self.date}"
 
 
 def normalize_text(value: str) -> str:
@@ -71,6 +84,16 @@ def classify_update(suffix: str) -> str:
     return "Security / Cumulative"
 
 
+def normalize_release_date(value: str) -> str:
+    value = normalize_text(value).rstrip(".")
+    for fmt in ("%B %d, %Y", "%d %B %Y", "%B %d %Y"):
+        try:
+            return datetime.strptime(value, fmt).strftime("%B %-d, %Y")
+        except ValueError:
+            continue
+    return value
+
+
 def parse_update_anchor(text: str, href: str, base_url: str) -> UpdateItem | None:
     text = normalize_text(text)
     match = UPDATE_RE.match(text)
@@ -84,19 +107,22 @@ def parse_update_anchor(text: str, href: str, base_url: str) -> UpdateItem | Non
         return None
     kb = match.group("kb").upper()
     return UpdateItem(
+        id=kb,
         date=match.group("date"),
         kb=kb,
         builds=builds,
         update_type=classify_update(match.group("suffix")),
+        channel="General Availability",
+        version=STABLE_VERSION,
         title=text,
         support_url=urljoin(base_url, href),
         technical_url=f"https://support.microsoft.com/en-us/help/{kb[2:]}",
     )
 
 
-def extract_updates(html: str, base_url: str = SOURCE_URL) -> list[UpdateItem]:
+def extract_updates(html: str, base_url: str = STABLE_SOURCE_URL) -> list[UpdateItem]:
     soup = BeautifulSoup(html, "html.parser")
-    target_re = re.compile(rf"^Windows\s*11,?\s*version\s*{TARGET_VERSION}$", re.I)
+    target_re = re.compile(rf"^Windows\s*11,?\s*version\s*{STABLE_VERSION}$", re.I)
     any_version_re = re.compile(r"^Windows\s*11,?\s*version\s*\d{2}H\d$", re.I)
     candidates: list[UpdateItem] = []
     collecting = False
@@ -131,8 +157,8 @@ def extract_updates(html: str, base_url: str = SOURCE_URL) -> list[UpdateItem]:
     return unique
 
 
-def fetch_history(session: requests.Session) -> list[UpdateItem]:
-    response = session.get(SOURCE_URL, headers=HEADERS, timeout=40)
+def fetch_stable_history(session: requests.Session) -> list[UpdateItem]:
+    response = session.get(STABLE_SOURCE_URL, headers=HEADERS, timeout=40)
     response.raise_for_status()
     response.encoding = response.apparent_encoding or "utf-8"
     updates = extract_updates(response.text, response.url)
@@ -141,7 +167,71 @@ def fetch_history(session: requests.Session) -> list[UpdateItem]:
     return updates
 
 
-def find_catalog_update_id(html: str, kb: str) -> str:
+def extract_insider_links(html: str, base_url: str = INSIDER_INDEX_URL) -> list[tuple[str, str]]:
+    soup = BeautifulSoup(html, "html.parser")
+    found: dict[str, str] = {}
+    for anchor in soup.find_all("a", href=True):
+        absolute = urljoin(base_url, anchor["href"])
+        path = re.sub(r"^https?://learn\.microsoft\.com/(?:[a-z]{2}-[a-z]{2}/)?", "/", absolute, flags=re.I)
+        match = INSIDER_LINK_RE.search(path.rstrip("/"))
+        if not match:
+            continue
+        revision = int(match.group(2))
+        if revision < INSIDER_MIN_REVISION:
+            continue
+        build = f"26300.{revision}"
+        found[build] = absolute
+    return sorted(found.items(), key=lambda pair: tuple(map(int, pair[0].split("."))), reverse=True)
+
+
+def parse_insider_page(html: str, url: str, build: str) -> UpdateItem:
+    soup = BeautifulSoup(html, "html.parser")
+    text = normalize_text(soup.get_text(" ", strip=True))
+    date_match = re.search(
+        r"Release date:\s*((?:[A-Z][a-z]+\s+\d{1,2},\s+\d{4})|(?:\d{1,2}\s+[A-Z][a-z]+\s+\d{4}))",
+        text,
+        re.I,
+    )
+    if not date_match:
+        raise RuntimeError(f"Release date not found for Insider build {build}")
+    kb_match = re.search(r"\bKB\s*(\d{6,})\b", text, re.I)
+    kb = f"KB{kb_match.group(1)}" if kb_match else ""
+    page_title = normalize_text((soup.find("h1") or soup.title).get_text(" ", strip=True))
+    return UpdateItem(
+        id=kb or f"Build {build}",
+        date=normalize_release_date(date_match.group(1)),
+        kb=kb,
+        builds=[build],
+        update_type="Dev / Experimental",
+        channel="Dev / Experimental",
+        version=INSIDER_VERSION,
+        title=page_title or f"Windows 11 Insider Preview Build {build}",
+        support_url=url,
+        technical_url=url,
+        msu_x64_url="",
+        msu_status="not_applicable",
+    )
+
+
+def fetch_insider_history(session: requests.Session) -> list[UpdateItem]:
+    response = session.get(INSIDER_INDEX_URL, headers=HEADERS, timeout=40)
+    response.raise_for_status()
+    links = extract_insider_links(response.text, response.url)
+    if not links:
+        raise RuntimeError("No Windows 11 26H2 Dev / Experimental build links were parsed.")
+
+    updates: list[UpdateItem] = []
+    for index, (build, url) in enumerate(links[:30]):
+        page = session.get(url, headers=HEADERS, timeout=40)
+        page.raise_for_status()
+        item = parse_insider_page(page.text, page.url, build)
+        updates.append(item)
+        if index < min(len(links), 30) - 1:
+            time.sleep(0.25)
+    return updates
+
+
+def find_catalog_update_id(html: str, kb: str, target_version: str = STABLE_VERSION) -> str:
     soup = BeautifulSoup(html, "html.parser")
     preferred: list[tuple[int, str]] = []
     for row in soup.find_all("tr"):
@@ -150,7 +240,7 @@ def find_catalog_update_id(html: str, kb: str) -> str:
         if kb.lower() not in lower or "x64-based systems" not in lower:
             continue
         score = 0
-        if f"version {TARGET_VERSION.lower()}" in lower:
+        if f"version {target_version.lower()}" in lower:
             score += 100
         if "cumulative update" in lower:
             score += 25
@@ -187,9 +277,7 @@ def extract_msu_url(html: str, kb: str) -> str:
 
 
 def fetch_msu_url(session: requests.Session, kb: str) -> str:
-    search = session.get(
-        CATALOG_SEARCH_URL.format(kb), headers=HEADERS, timeout=40
-    )
+    search = session.get(CATALOG_SEARCH_URL.format(kb), headers=HEADERS, timeout=40)
     search.raise_for_status()
     update_id = find_catalog_update_id(search.text, kb)
     dialog = session.post(
@@ -211,19 +299,23 @@ def load_existing() -> dict[str, Any]:
         return {}
 
 
-def canonical_updates(updates: list[dict[str, Any]]) -> str:
-    return json.dumps(updates, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+def existing_channel(data: dict[str, Any], channel_id: str) -> dict[str, Any]:
+    if data.get("schema_version") == 2:
+        return data.get("channels", {}).get(channel_id, {})
+    if channel_id == "stable" and data.get("updates"):
+        return data
+    return {}
 
 
-def main() -> int:
-    session = requests.Session()
-    existing = load_existing()
-    old_by_kb = {item.get("kb"): item for item in existing.get("updates", [])}
-    parsed = fetch_history(session)
+def canonical(value: Any) -> str:
+    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
+
+def enrich_stable(session: requests.Session, parsed: list[UpdateItem], old_channel: dict[str, Any]) -> list[UpdateItem]:
+    old_by_id = {item.get("id") or item.get("kb"): item for item in old_channel.get("updates", [])}
     enriched: list[UpdateItem] = []
     for index, item in enumerate(parsed):
-        old = old_by_kb.get(item.kb, {})
+        old = old_by_id.get(item.id, {})
         cached_url = old.get("msu_x64_url", "")
         if cached_url and url_matches_kb(cached_url, item.kb):
             msu_url = cached_url
@@ -232,55 +324,85 @@ def main() -> int:
             try:
                 msu_url = fetch_msu_url(session, item.kb)
                 status = "available"
-            except Exception as exc:  # Keep history available even if Catalog is temporarily unavailable.
+            except Exception as exc:
                 print(f"warning: {item.kb}: {exc}", file=sys.stderr)
                 msu_url = ""
                 status = "unavailable"
             if index < len(parsed) - 1:
                 time.sleep(0.7)
-        enriched.append(
-            UpdateItem(
-                date=item.date,
-                kb=item.kb,
-                builds=item.builds,
-                update_type=item.update_type,
-                title=item.title,
-                support_url=item.support_url,
-                technical_url=item.technical_url,
-                msu_x64_url=msu_url,
-                msu_status=status,
-            )
-        )
+        enriched.append(UpdateItem(**{**asdict(item), "msu_x64_url": msu_url, "msu_status": status}))
+    return enriched
 
-    update_dicts = [asdict(item) for item in enriched]
-    old_updates = existing.get("updates", [])
-    changed = canonical_updates(update_dicts) != canonical_updates(old_updates)
 
-    if changed or not DATA_FILE.exists():
+def channel_payload(channel_id: str, label: str, source_url: str, updates: list[UpdateItem]) -> dict[str, Any]:
+    items = [asdict(item) for item in updates]
+    return {
+        "id": channel_id,
+        "label": label,
+        "version": updates[0].version if updates else "",
+        "channel": updates[0].channel if updates else "",
+        "source_url": source_url,
+        "count": len(items),
+        "latest_id": items[0]["id"] if items else "",
+        "updates": items,
+    }
+
+
+def main() -> int:
+    session = requests.Session()
+    existing = load_existing()
+
+    stable = enrich_stable(session, fetch_stable_history(session), existing_channel(existing, "stable"))
+
+    try:
+        insider = fetch_insider_history(session)
+    except Exception as exc:
+        cached = existing_channel(existing, "dev").get("updates", [])
+        if not cached:
+            raise
+        print(f"warning: retaining cached Dev / Experimental data: {exc}", file=sys.stderr)
+        insider = [UpdateItem(**item) for item in cached]
+
+    channels = {
+        "stable": channel_payload("stable", "Windows 11 25H2", STABLE_SOURCE_URL, stable),
+        "dev": channel_payload("dev", "Windows 11 26H2 Dev / Experimental", INSIDER_INDEX_URL, insider),
+    }
+
+    comparable = {key: value["updates"] for key, value in channels.items()}
+    old_comparable = {
+        key: existing_channel(existing, key).get("updates", []) for key in channels
+    }
+    changed = canonical(comparable) != canonical(old_comparable)
+
+    if changed or not DATA_FILE.exists() or existing.get("schema_version") != 2:
         generated_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
-        digest = hashlib.sha256(canonical_updates(update_dicts).encode("utf-8")).hexdigest()
+        digest = hashlib.sha256(canonical(comparable).encode("utf-8")).hexdigest()
         payload = {
-            "schema_version": 1,
+            "schema_version": 2,
             "product": "Windows 11",
-            "version": TARGET_VERSION,
-            "source_url": SOURCE_URL,
             "generated_at": generated_at,
             "content_sha256": digest,
-            "count": len(update_dicts),
-            "latest_kb": update_dicts[0]["kb"] if update_dicts else "",
-            "updates": update_dicts,
+            "latest_kb": channels["stable"]["latest_id"],
+            "latest_dev_build": channels["dev"]["latest_id"],
+            "channels": channels,
         }
         text = json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
         DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
         WEB_DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
         DATA_FILE.write_text(text, encoding="utf-8")
         WEB_DATA_FILE.write_text(text, encoding="utf-8")
-        print(f"updated: {len(update_dicts)} records; latest={payload['latest_kb']}")
+        print(
+            "updated: "
+            f"stable={channels['stable']['count']} ({channels['stable']['latest_id']}), "
+            f"dev={channels['dev']['count']} ({channels['dev']['latest_id']})"
+        )
     else:
-        # Ensure Pages copy exists without changing the canonical metadata.
         WEB_DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
         WEB_DATA_FILE.write_text(DATA_FILE.read_text(encoding="utf-8"), encoding="utf-8")
-        print(f"no change: {len(update_dicts)} records")
+        print(
+            "no change: "
+            f"stable={channels['stable']['count']}, dev={channels['dev']['count']}"
+        )
     return 0
 
 
