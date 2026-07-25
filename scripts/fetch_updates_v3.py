@@ -77,7 +77,7 @@ def _collect_builds(text: str, found: dict[str, str]) -> None:
 
     for match in BUILD_RE.finditer(decoded):
         revision = int(match.group(1))
-        if revision < base.INSIDER_MIN_REVISION:
+        if revision < base.legacy.INSIDER_MIN_REVISION:
             continue
         build = f"26300.{revision}"
         found.setdefault(build, LEARN_BUILD_URL.format(build=build.replace(".", "-")))
@@ -87,16 +87,16 @@ def discover_insider_links(session: requests.Session) -> list[tuple[str, str]]:
     found: dict[str, str] = {}
 
     try:
-        response = session.get(base.INSIDER_INDEX_URL, headers=base.HEADERS, timeout=40)
+        response = session.get(base.legacy.INSIDER_INDEX_URL, headers=base.legacy.HEADERS, timeout=40)
         response.raise_for_status()
         _collect_builds(response.text, found)
-        for build, url in base.extract_insider_links(response.text, response.url):
+        for build, url in base.legacy.extract_insider_links(response.text, response.url):
             found[build] = url
     except Exception as exc:
         print(f"warning: Learn index discovery failed: {exc}", file=sys.stderr)
 
     try:
-        blog = session.get(BLOG_INDEX_URL, headers=base.HEADERS, timeout=40)
+        blog = session.get(BLOG_INDEX_URL, headers=base.legacy.HEADERS, timeout=40)
         blog.raise_for_status()
         _collect_builds(blog.text, found)
 
@@ -108,7 +108,7 @@ def discover_insider_links(session: requests.Session) -> list[tuple[str, str]]:
 
         for url in announcement_urls[:20]:
             try:
-                page = session.get(url, headers=base.HEADERS, timeout=40)
+                page = session.get(url, headers=base.legacy.HEADERS, timeout=40)
                 page.raise_for_status()
                 _collect_builds(page.text, found)
             except Exception as exc:
@@ -116,26 +116,25 @@ def discover_insider_links(session: requests.Session) -> list[tuple[str, str]]:
     except Exception as exc:
         print(f"warning: Insider blog discovery failed: {exc}", file=sys.stderr)
 
-    # Always include the known official builds before limiting the fetch list.
     for build, metadata in OFFICIAL_BUILD_FALLBACKS.items():
         found.setdefault(build, metadata["url"])
 
     return sorted(found.items(), key=lambda pair: _build_sort_key(pair[0]), reverse=True)
 
 
-def _fallback_item(build: str) -> base.UpdateItem | None:
+def _fallback_item(build: str) -> base.legacy.UpdateItem | None:
     metadata = OFFICIAL_BUILD_FALLBACKS.get(build)
     if not metadata:
         return None
 
-    return base.UpdateItem(
+    return base.legacy.UpdateItem(
         id=f"Build {build}",
         date=metadata["date"],
         kb="",
         builds=[build],
         update_type="Dev / Experimental",
         channel="Dev / Experimental",
-        version=base.INSIDER_VERSION,
+        version=base.legacy.INSIDER_VERSION,
         title=f"Windows 11 Insider Experimental Preview Build {build}",
         support_url=metadata["url"],
         technical_url=metadata["url"],
@@ -144,17 +143,17 @@ def _fallback_item(build: str) -> base.UpdateItem | None:
     )
 
 
-def fetch_insider_history(session: requests.Session) -> list[base.UpdateItem]:
+def fetch_insider_history(session: requests.Session) -> list[base.legacy.UpdateItem]:
     links = discover_insider_links(session)
-    updates: list[base.UpdateItem] = []
+    updates: list[base.legacy.UpdateItem] = []
     seen_builds: set[str] = set()
 
     for index, (build, url) in enumerate(links[:30]):
-        item: base.UpdateItem | None = None
+        item: base.legacy.UpdateItem | None = None
         try:
-            page = session.get(url, headers=base.HEADERS, timeout=40)
+            page = session.get(url, headers=base.legacy.HEADERS, timeout=40)
             page.raise_for_status()
-            item = base.parse_insider_page(page.text, page.url, build)
+            item = base.legacy.parse_insider_page(page.text, page.url, build)
         except Exception as exc:
             item = _fallback_item(build)
             if item:
@@ -172,9 +171,6 @@ def fetch_insider_history(session: requests.Session) -> list[base.UpdateItem]:
         if index < min(len(links), 30) - 1:
             time.sleep(0.2)
 
-    # Critical guarantee: append every verified official build that dynamic
-    # parsing did not produce. This also protects against a list of more than 30
-    # noisy matches pushing a valid build outside the fetch window.
     for build in OFFICIAL_BUILD_FALLBACKS:
         if build in seen_builds:
             continue
@@ -191,8 +187,14 @@ def fetch_insider_history(session: requests.Session) -> list[base.UpdateItem]:
     return updates
 
 
-base.fetch_insider_history = fetch_insider_history
+def main() -> int:
+    # fetch_updates_v2.main() always reassigns legacy.fetch_insider_history to its
+    # own v2 implementation. Patch the exact function it references, then call
+    # the legacy main directly so the v3 implementation is not overwritten.
+    base.fetch_insider_history_resilient = fetch_insider_history
+    base.legacy.fetch_insider_history = fetch_insider_history
+    return base.legacy.main()
 
 
 if __name__ == "__main__":
-    raise SystemExit(base.main())
+    raise SystemExit(main())
