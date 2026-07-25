@@ -1,361 +1,488 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "product": "Windows 11",
-  "version": "25H2",
-  "source_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2025/07/windows-11-version-25h2-update-history",
-  "generated_at": "2026-07-24T13:18:23+00:00",
-  "content_sha256": "5e28287d5332a3aca94a8aff7e5417cbff7b511833c0648bfbffc5220e6470f4",
-  "count": 25,
+  "generated_at": "2026-07-25T01:55:58+00:00",
+  "content_sha256": "b77da8cbc25ee9a90082f8fd9d213003b62453341932a689d09f8dade992bce5",
   "latest_kb": "KB5121767",
-  "updates": [
-    {
-      "date": "July 18, 2026",
-      "kb": "KB5121767",
-      "builds": [
-        "26200.8894",
-        "26100.8894"
-      ],
-      "update_type": "Out-of-band",
-      "title": "July 18, 2026—KB5121767 (OS Builds 26200.8894 and 26100.8894) Out-of-band",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/07/kb5121767-out-of-band",
-      "technical_url": "https://support.microsoft.com/en-us/help/5121767",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/09279629-f3ef-445e-bfbd-d7936e176164/public/windows11.0-kb5121767-x64_588e6404d4e909f2609486fd91a7b28f02d4be0a.msu",
-      "msu_status": "available"
+  "latest_dev_build": "Build 26300.8772",
+  "channels": {
+    "stable": {
+      "id": "stable",
+      "label": "Windows 11 25H2",
+      "version": "25H2",
+      "channel": "General Availability",
+      "source_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2025/07/windows-11-version-25h2-update-history",
+      "count": 25,
+      "latest_id": "KB5121767",
+      "updates": [
+        {
+          "id": "KB5121767",
+          "date": "July 18, 2026",
+          "kb": "KB5121767",
+          "builds": [
+            "26200.8894",
+            "26100.8894"
+          ],
+          "update_type": "Out-of-band",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "July 18, 2026—KB5121767 (OS Builds 26200.8894 and 26100.8894) Out-of-band",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/07/kb5121767-out-of-band",
+          "technical_url": "https://support.microsoft.com/en-us/help/5121767",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/09279629-f3ef-445e-bfbd-d7936e176164/public/windows11.0-kb5121767-x64_588e6404d4e909f2609486fd91a7b28f02d4be0a.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5101650",
+          "date": "July 14, 2026",
+          "kb": "KB5101650",
+          "builds": [
+            "26200.8875",
+            "26100.8875"
+          ],
+          "update_type": "Security / Cumulative",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "July 14, 2026—KB5101650 (OS Builds 26200.8875 and 26100.8875)",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/07/july-14-2026-kb5101650-os-builds-26200-8875-and-26100-8875",
+          "technical_url": "https://support.microsoft.com/en-us/help/5101650",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/07dceb13-ffad-47c5-a8fe-0f195bd14dc9/public/windows11.0-kb5101650-x64_5d4163c2e483adc9456b7ea9a8ea83d8fceaf52c.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5095093",
+          "date": "June 23, 2026",
+          "kb": "KB5095093",
+          "builds": [
+            "26200.8737",
+            "26100.8737"
+          ],
+          "update_type": "Preview",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "June 23, 2026—KB5095093 (OS Builds 26200.8737 and 26100.8737) Preview",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/06/june-23-2026-kb5095093-os-builds-26200-8737-and-26100-8737-preview",
+          "technical_url": "https://support.microsoft.com/en-us/help/5095093",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/0c7a093a-ecf2-4386-afa5-75bcd763ae00/public/windows11.0-kb5095093-x64_871fd990cedd9d3da6c90ca8b1dd0cc62b42c330.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5094126",
+          "date": "June 9, 2026",
+          "kb": "KB5094126",
+          "builds": [
+            "26200.8655",
+            "26100.8655"
+          ],
+          "update_type": "Security / Cumulative",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "June 9, 2026—KB5094126 (OS Builds 26200.8655 and 26100.8655)",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/06/june-9-2026-kb5094126-os-builds-26200-8655-and-26100-8655",
+          "technical_url": "https://support.microsoft.com/en-us/help/5094126",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/8ab7b9b4-fb40-4820-afb3-cbaf4cc0a701/public/windows11.0-kb5094126-x64_1b7fae967f9781d27e8ee3f848fba51b7cd62e88.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5089573",
+          "date": "May 26, 2026",
+          "kb": "KB5089573",
+          "builds": [
+            "26200.8524",
+            "26100.8524"
+          ],
+          "update_type": "Preview",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "May 26, 2026—KB5089573 (OS Builds 26200.8524 and 26100.8524) Preview",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/05/may-26-2026-kb5089573-os-builds-26200-8524-and-26100-8524-preview",
+          "technical_url": "https://support.microsoft.com/en-us/help/5089573",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/17caea23-ee77-4074-87dc-5820c52a9f45/public/windows11.0-kb5089573-x64_cc650a5cea73a2bca157ef66e0ce88f5c1d95e14.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5089549",
+          "date": "May 12, 2026",
+          "kb": "KB5089549",
+          "builds": [
+            "26200.8457",
+            "26100.8457"
+          ],
+          "update_type": "Security / Cumulative",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "May 12, 2026—KB5089549 (OS Builds 26200.8457 and 26100.8457)",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/05/may-12-2026-kb5089549-os-builds-26200-8457-and-26100-8457",
+          "technical_url": "https://support.microsoft.com/en-us/help/5089549",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/53914338-2058-4b75-95a6-6d674648107c/public/windows11.0-kb5089549-x64_9a542b5813b003374532dceeba49b7e07c3fc2fb.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5083631",
+          "date": "April 30, 2026",
+          "kb": "KB5083631",
+          "builds": [
+            "26200.8328",
+            "26100.8328"
+          ],
+          "update_type": "Preview",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "April 30, 2026—KB5083631 (OS Builds 26200.8328 and 26100.8328) Preview",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/04/april-30-2026-kb5083631-os-builds-26200-8328-and-26100-8328-preview",
+          "technical_url": "https://support.microsoft.com/en-us/help/5083631",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/c6284be9-cb7a-4b54-b71a-403491a2b2ec/public/windows11.0-kb5083631-x64_a9979e387050abf3bc9feca1a024033209cbc804.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5083769",
+          "date": "April 14, 2026",
+          "kb": "KB5083769",
+          "builds": [
+            "26200.8246",
+            "26100.8246"
+          ],
+          "update_type": "Security / Cumulative",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "April 14, 2026—KB5083769 (OS Builds 26200.8246 and 26100.8246)",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/04/april-14-2026-kb5083769-os-builds-26200-8246-and-26100-8246",
+          "technical_url": "https://support.microsoft.com/en-us/help/5083769",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/ca944ac5-63da-42b4-9d1f-58b0c3259132/public/windows11.0-kb5083769-x64_57f4bd47d73842dd239f2c18b8ce48c8bf1c1d5d.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5086672",
+          "date": "March 31, 2026",
+          "kb": "KB5086672",
+          "builds": [
+            "26200.8117",
+            "26100.8117"
+          ],
+          "update_type": "Out-of-band",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "March 31, 2026—KB5086672 (OS Builds 26200.8117 and 26100.8117) Out-of-band",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/03/march-31-2026-kb5086672-os-builds-26200-8117-and-26100-8117-out-of-band",
+          "technical_url": "https://support.microsoft.com/en-us/help/5086672",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/234d6ce0-35f3-4739-9f10-5b2fb849c8e2/public/windows11.0-kb5086672-x64_97df4ed279e18da5b02308a5a3361313520fd346.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5079391",
+          "date": "March 26, 2026",
+          "kb": "KB5079391",
+          "builds": [
+            "26200.8116",
+            "26100.8116"
+          ],
+          "update_type": "Preview",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "March 26, 2026—KB5079391 (OS Builds 26200.8116 and 26100.8116) Preview",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/03/march-26-2026-kb5079391-os-builds-26200-8116-and-26100-8116-preview",
+          "technical_url": "https://support.microsoft.com/en-us/help/5079391",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/f7b8d266-ccc7-4709-81f4-28bcd6c45062/public/windows11.0-kb5079391-x64_0a0129ebe88fdd66e19ac7d40d9cddd0b18c3332.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5085516",
+          "date": "March 21, 2026",
+          "kb": "KB5085516",
+          "builds": [
+            "26200.8039",
+            "26100.8039"
+          ],
+          "update_type": "Out-of-band",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "March 21, 2026—KB5085516 (OS Builds 26200.8039 and 26100.8039) Out-of-band",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/03/march-21-2026-kb5085516-os-builds-26200-8039-and-26100-8039-out-of-band",
+          "technical_url": "https://support.microsoft.com/en-us/help/5085516",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/80d1ded6-1dbd-41de-84ff-790373be83c8/public/windows11.0-kb5085516-x64_52aef89bc1afc5e67eec927556ec6926122936ad.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5079473",
+          "date": "March 10, 2026",
+          "kb": "KB5079473",
+          "builds": [
+            "26200.8037",
+            "26100.8037"
+          ],
+          "update_type": "Security / Cumulative",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "March 10, 2026—KB5079473 (OS Builds 26200.8037 and 26100.8037)",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/03/march-10-2026-kb5079473-os-builds-26200-8037-and-26100-8037",
+          "technical_url": "https://support.microsoft.com/en-us/help/5079473",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/db81d709-c552-47ed-a3b9-ba77dfff9972/public/windows11.0-kb5079473-x64_651d0cdb7665e03bb80b4c198784b255081032d2.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5077241",
+          "date": "February 24, 2026",
+          "kb": "KB5077241",
+          "builds": [
+            "26200.7922",
+            "26100.7922"
+          ],
+          "update_type": "Preview",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "February 24, 2026—KB5077241 (OS Builds 26200.7922 and 26100.7922) Preview",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/02/february-24-2026-kb5077241-os-builds-26200-7922-and-26100-7922-preview",
+          "technical_url": "https://support.microsoft.com/en-us/help/5077241",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/66b28d24-251c-4c0a-8a19-82bc599deac3/public/windows11.0-kb5077241-x64_739bca934f7f45038f9752637f632afa52c35f75.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5077181",
+          "date": "February 10, 2026",
+          "kb": "KB5077181",
+          "builds": [
+            "26200.7840",
+            "26100.7840"
+          ],
+          "update_type": "Security / Cumulative",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "February 10, 2026—KB5077181 (OS Builds 26200.7840 and 26100.7840)",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/02/february-10-2026-kb5077181-os-builds-26200-7840-and-26100-7840",
+          "technical_url": "https://support.microsoft.com/en-us/help/5077181",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/eb8d76c6-f362-4354-ad8c-cdfd1d8390a8/public/windows11.0-kb5077181-x64_33d38563662e659ceb84fb8b65aa05ce5876f5a4.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5074105",
+          "date": "January 29, 2026",
+          "kb": "KB5074105",
+          "builds": [
+            "26200.7705",
+            "26100.7705"
+          ],
+          "update_type": "Preview",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "January 29, 2026—KB5074105 (OS Builds 26200.7705 and 26100.7705) Preview",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/01/january-29-2026-kb5074105-os-builds-26200-7705-and-26100-7705-preview",
+          "technical_url": "https://support.microsoft.com/en-us/help/5074105",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/1f3ba14b-3831-4dd8-8839-b63b795497e4/public/windows11.0-kb5074105-x64_74e1f93136eef7114e2bed8ff032b049ec62992a.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5078127",
+          "date": "January 24, 2026",
+          "kb": "KB5078127",
+          "builds": [
+            "26200.7628",
+            "26100.7628"
+          ],
+          "update_type": "Out-of-band",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "January 24, 2026—KB5078127 (OS Builds 26200.7628 and 26100.7628) Out-of-band",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/01/january-24-2026-kb5078127-os-builds-26200-7628-and-26100-7628-out-of-band",
+          "technical_url": "https://support.microsoft.com/en-us/help/5078127",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/df3e807e-9c9c-448e-93ce-63477b39d7f9/public/windows11.0-kb5078127-x64_2669c24d8d8227e7992853d32fb4e95873bbe6bf.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5077744",
+          "date": "January 17, 2026",
+          "kb": "KB5077744",
+          "builds": [
+            "26200.7627",
+            "26100.7627"
+          ],
+          "update_type": "Out-of-band",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "January 17, 2026—KB5077744 (OS Builds 26200.7627 and 26100.7627) Out-of-band",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/01/january-17-2026-kb5077744-os-builds-26200-7627-and-26100-7627-out-of-band",
+          "technical_url": "https://support.microsoft.com/en-us/help/5077744",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/aabb854a-0fe9-4caf-af00-d78fc1f8ddcb/public/windows11.0-kb5077744-x64_fb63f62e4846b81b064c3515d7aff46c9d6d50c8.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5074109",
+          "date": "January 13, 2026",
+          "kb": "KB5074109",
+          "builds": [
+            "26200.7623",
+            "26100.7623"
+          ],
+          "update_type": "Security / Cumulative",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "January 13, 2026—KB5074109 (OS Builds 26200.7623 and 26100.7623)",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/01/january-13-2026-kb5074109-os-builds-26200-7623-and-26100-7623",
+          "technical_url": "https://support.microsoft.com/en-us/help/5074109",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/b7aa64b3-8441-4d36-b8f7-409f3cfeac1c/public/windows11.0-kb5074109-x64_fe29a336e6e650dda4038e82bcc0c6286c70b9a1.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5072033",
+          "date": "December 9, 2025",
+          "kb": "KB5072033",
+          "builds": [
+            "26200.7462",
+            "26100.7462"
+          ],
+          "update_type": "Security / Cumulative",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "December 9, 2025—KB5072033 (OS Builds 26200.7462 and 26100.7462)",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2025/12/december-9-2025-kb5072033-os-builds-26200-7462-and-26100-7462",
+          "technical_url": "https://support.microsoft.com/en-us/help/5072033",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/9d6e2b81-b755-4e68-af73-9f4ee41cd758/public/windows11.0-kb5072033-x64_a62291f0bad9123842bf15dcdd75d807d2a2c76a.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5070311",
+          "date": "December 1, 2025",
+          "kb": "KB5070311",
+          "builds": [
+            "26200.7309",
+            "26100.7309"
+          ],
+          "update_type": "Preview",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "December 1, 2025—KB5070311 (OS Builds 26200.7309 and 26100.7309) Preview",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2025/12/december-1-2025-kb5070311-os-builds-26200-7309-and-26100-7309-preview",
+          "technical_url": "https://support.microsoft.com/en-us/help/5070311",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/f441052e-a67d-4d6a-81e9-5acaddb88f58/public/windows11.0-kb5070311-x64_26ddb2f650e898decc8891401f22f0b506638572.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5068861",
+          "date": "November 11, 2025",
+          "kb": "KB5068861",
+          "builds": [
+            "26200.7171",
+            "26100.7171"
+          ],
+          "update_type": "Security / Cumulative",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "November 11, 2025—KB5068861 (OS Builds 26200.7171 and 26100.7171)",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2025/11/november-11-2025-kb5068861-os-builds-26200-7171-and-26100-7171",
+          "technical_url": "https://support.microsoft.com/en-us/help/5068861",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/5315757b-0dc6-4282-a148-c7bf0b6b0e90/public/windows11.0-kb5068861-x64_acc4fe9c928835c0d44cdc0419d1867dbd2b62b2.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5067036",
+          "date": "October 28, 2025",
+          "kb": "KB5067036",
+          "builds": [
+            "26200.7019",
+            "26100.7019"
+          ],
+          "update_type": "Preview",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "October 28, 2025—KB5067036 (OS Builds 26200.7019 and 26100.7019) Preview",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2025/10/october-28-2025-kb5067036-os-builds-26200-7019-and-26100-7019-preview",
+          "technical_url": "https://support.microsoft.com/en-us/help/5067036",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/191a2b93-5e38-41d5-bae3-38c73242cf96/public/windows11.0-kb5067036-x64_78c6126284e496eec36b70537a69c5f76eb07322.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5070773",
+          "date": "October 20, 2025",
+          "kb": "KB5070773",
+          "builds": [
+            "26200.6901",
+            "26100.6901"
+          ],
+          "update_type": "Out-of-band",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "October 20, 2025—KB5070773 (OS Builds 26200.6901 and 26100.6901) Out-of-band",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2025/10/october-20-2025-kb5070773-os-builds-26200-6901-and-26100-6901-out-of-band",
+          "technical_url": "https://support.microsoft.com/en-us/help/5070773",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/5f9be7a2-56e4-4051-b992-2e2bb7d32db9/public/windows11.0-kb5070773-x64_b235da912270f84b761402e9511000a4f500b4ac.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5066835",
+          "date": "October 14, 2025",
+          "kb": "KB5066835",
+          "builds": [
+            "26200.6899",
+            "26100.6899"
+          ],
+          "update_type": "Security / Cumulative",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "October 14, 2025—KB5066835 (OS Builds 26200.6899 and 26100.6899)",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2025/10/october-14-2025-kb5066835-os-builds-26200-6899-and-26100-6899",
+          "technical_url": "https://support.microsoft.com/en-us/help/5066835",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/7c0d1a12-9944-4b26-bed7-a722c040d631/public/windows11.0-kb5066835-x64_2f193bc50987a9c27e42eceeb90648af19cc813a.msu",
+          "msu_status": "available"
+        },
+        {
+          "id": "KB5065789",
+          "date": "September 29, 2025",
+          "kb": "KB5065789",
+          "builds": [
+            "26100.6725"
+          ],
+          "update_type": "Preview",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "September 29, 2025—KB5065789 (OS Build 26100.6725) Preview",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2025/09/september-29-2025-kb5065789-os-builds-26200-6725-and-26100-6725-preview",
+          "technical_url": "https://support.microsoft.com/en-us/help/5065789",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/7b6fed73-6e54-41bd-b9d1-315e9de95795/public/windows11.0-kb5065789-x64_e3d377d0a97a3f7efaeec8f698d3040751f7da18.msu",
+          "msu_status": "available"
+        }
+      ]
     },
-    {
-      "date": "July 14, 2026",
-      "kb": "KB5101650",
-      "builds": [
-        "26200.8875",
-        "26100.8875"
-      ],
-      "update_type": "Security / Cumulative",
-      "title": "July 14, 2026—KB5101650 (OS Builds 26200.8875 and 26100.8875)",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/07/july-14-2026-kb5101650-os-builds-26200-8875-and-26100-8875",
-      "technical_url": "https://support.microsoft.com/en-us/help/5101650",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/07dceb13-ffad-47c5-a8fe-0f195bd14dc9/public/windows11.0-kb5101650-x64_5d4163c2e483adc9456b7ea9a8ea83d8fceaf52c.msu",
-      "msu_status": "available"
-    },
-    {
-      "date": "June 23, 2026",
-      "kb": "KB5095093",
-      "builds": [
-        "26200.8737",
-        "26100.8737"
-      ],
-      "update_type": "Preview",
-      "title": "June 23, 2026—KB5095093 (OS Builds 26200.8737 and 26100.8737) Preview",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/06/june-23-2026-kb5095093-os-builds-26200-8737-and-26100-8737-preview",
-      "technical_url": "https://support.microsoft.com/en-us/help/5095093",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/0c7a093a-ecf2-4386-afa5-75bcd763ae00/public/windows11.0-kb5095093-x64_871fd990cedd9d3da6c90ca8b1dd0cc62b42c330.msu",
-      "msu_status": "available"
-    },
-    {
-      "date": "June 9, 2026",
-      "kb": "KB5094126",
-      "builds": [
-        "26200.8655",
-        "26100.8655"
-      ],
-      "update_type": "Security / Cumulative",
-      "title": "June 9, 2026—KB5094126 (OS Builds 26200.8655 and 26100.8655)",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/06/june-9-2026-kb5094126-os-builds-26200-8655-and-26100-8655",
-      "technical_url": "https://support.microsoft.com/en-us/help/5094126",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/8ab7b9b4-fb40-4820-afb3-cbaf4cc0a701/public/windows11.0-kb5094126-x64_1b7fae967f9781d27e8ee3f848fba51b7cd62e88.msu",
-      "msu_status": "available"
-    },
-    {
-      "date": "May 26, 2026",
-      "kb": "KB5089573",
-      "builds": [
-        "26200.8524",
-        "26100.8524"
-      ],
-      "update_type": "Preview",
-      "title": "May 26, 2026—KB5089573 (OS Builds 26200.8524 and 26100.8524) Preview",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/05/may-26-2026-kb5089573-os-builds-26200-8524-and-26100-8524-preview",
-      "technical_url": "https://support.microsoft.com/en-us/help/5089573",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/17caea23-ee77-4074-87dc-5820c52a9f45/public/windows11.0-kb5089573-x64_cc650a5cea73a2bca157ef66e0ce88f5c1d95e14.msu",
-      "msu_status": "available"
-    },
-    {
-      "date": "May 12, 2026",
-      "kb": "KB5089549",
-      "builds": [
-        "26200.8457",
-        "26100.8457"
-      ],
-      "update_type": "Security / Cumulative",
-      "title": "May 12, 2026—KB5089549 (OS Builds 26200.8457 and 26100.8457)",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/05/may-12-2026-kb5089549-os-builds-26200-8457-and-26100-8457",
-      "technical_url": "https://support.microsoft.com/en-us/help/5089549",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/53914338-2058-4b75-95a6-6d674648107c/public/windows11.0-kb5089549-x64_9a542b5813b003374532dceeba49b7e07c3fc2fb.msu",
-      "msu_status": "available"
-    },
-    {
-      "date": "April 30, 2026",
-      "kb": "KB5083631",
-      "builds": [
-        "26200.8328",
-        "26100.8328"
-      ],
-      "update_type": "Preview",
-      "title": "April 30, 2026—KB5083631 (OS Builds 26200.8328 and 26100.8328) Preview",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/04/april-30-2026-kb5083631-os-builds-26200-8328-and-26100-8328-preview",
-      "technical_url": "https://support.microsoft.com/en-us/help/5083631",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/c6284be9-cb7a-4b54-b71a-403491a2b2ec/public/windows11.0-kb5083631-x64_a9979e387050abf3bc9feca1a024033209cbc804.msu",
-      "msu_status": "available"
-    },
-    {
-      "date": "April 14, 2026",
-      "kb": "KB5083769",
-      "builds": [
-        "26200.8246",
-        "26100.8246"
-      ],
-      "update_type": "Security / Cumulative",
-      "title": "April 14, 2026—KB5083769 (OS Builds 26200.8246 and 26100.8246)",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/04/april-14-2026-kb5083769-os-builds-26200-8246-and-26100-8246",
-      "technical_url": "https://support.microsoft.com/en-us/help/5083769",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/ca944ac5-63da-42b4-9d1f-58b0c3259132/public/windows11.0-kb5083769-x64_57f4bd47d73842dd239f2c18b8ce48c8bf1c1d5d.msu",
-      "msu_status": "available"
-    },
-    {
-      "date": "March 31, 2026",
-      "kb": "KB5086672",
-      "builds": [
-        "26200.8117",
-        "26100.8117"
-      ],
-      "update_type": "Out-of-band",
-      "title": "March 31, 2026—KB5086672 (OS Builds 26200.8117 and 26100.8117) Out-of-band",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/03/march-31-2026-kb5086672-os-builds-26200-8117-and-26100-8117-out-of-band",
-      "technical_url": "https://support.microsoft.com/en-us/help/5086672",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/234d6ce0-35f3-4739-9f10-5b2fb849c8e2/public/windows11.0-kb5086672-x64_97df4ed279e18da5b02308a5a3361313520fd346.msu",
-      "msu_status": "available"
-    },
-    {
-      "date": "March 26, 2026",
-      "kb": "KB5079391",
-      "builds": [
-        "26200.8116",
-        "26100.8116"
-      ],
-      "update_type": "Preview",
-      "title": "March 26, 2026—KB5079391 (OS Builds 26200.8116 and 26100.8116) Preview",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/03/march-26-2026-kb5079391-os-builds-26200-8116-and-26100-8116-preview",
-      "technical_url": "https://support.microsoft.com/en-us/help/5079391",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/f7b8d266-ccc7-4709-81f4-28bcd6c45062/public/windows11.0-kb5079391-x64_0a0129ebe88fdd66e19ac7d40d9cddd0b18c3332.msu",
-      "msu_status": "available"
-    },
-    {
-      "date": "March 21, 2026",
-      "kb": "KB5085516",
-      "builds": [
-        "26200.8039",
-        "26100.8039"
-      ],
-      "update_type": "Out-of-band",
-      "title": "March 21, 2026—KB5085516 (OS Builds 26200.8039 and 26100.8039) Out-of-band",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/03/march-21-2026-kb5085516-os-builds-26200-8039-and-26100-8039-out-of-band",
-      "technical_url": "https://support.microsoft.com/en-us/help/5085516",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/80d1ded6-1dbd-41de-84ff-790373be83c8/public/windows11.0-kb5085516-x64_52aef89bc1afc5e67eec927556ec6926122936ad.msu",
-      "msu_status": "available"
-    },
-    {
-      "date": "March 10, 2026",
-      "kb": "KB5079473",
-      "builds": [
-        "26200.8037",
-        "26100.8037"
-      ],
-      "update_type": "Security / Cumulative",
-      "title": "March 10, 2026—KB5079473 (OS Builds 26200.8037 and 26100.8037)",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/03/march-10-2026-kb5079473-os-builds-26200-8037-and-26100-8037",
-      "technical_url": "https://support.microsoft.com/en-us/help/5079473",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/db81d709-c552-47ed-a3b9-ba77dfff9972/public/windows11.0-kb5079473-x64_651d0cdb7665e03bb80b4c198784b255081032d2.msu",
-      "msu_status": "available"
-    },
-    {
-      "date": "February 24, 2026",
-      "kb": "KB5077241",
-      "builds": [
-        "26200.7922",
-        "26100.7922"
-      ],
-      "update_type": "Preview",
-      "title": "February 24, 2026—KB5077241 (OS Builds 26200.7922 and 26100.7922) Preview",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/02/february-24-2026-kb5077241-os-builds-26200-7922-and-26100-7922-preview",
-      "technical_url": "https://support.microsoft.com/en-us/help/5077241",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/66b28d24-251c-4c0a-8a19-82bc599deac3/public/windows11.0-kb5077241-x64_739bca934f7f45038f9752637f632afa52c35f75.msu",
-      "msu_status": "available"
-    },
-    {
-      "date": "February 10, 2026",
-      "kb": "KB5077181",
-      "builds": [
-        "26200.7840",
-        "26100.7840"
-      ],
-      "update_type": "Security / Cumulative",
-      "title": "February 10, 2026—KB5077181 (OS Builds 26200.7840 and 26100.7840)",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/02/february-10-2026-kb5077181-os-builds-26200-7840-and-26100-7840",
-      "technical_url": "https://support.microsoft.com/en-us/help/5077181",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/eb8d76c6-f362-4354-ad8c-cdfd1d8390a8/public/windows11.0-kb5077181-x64_33d38563662e659ceb84fb8b65aa05ce5876f5a4.msu",
-      "msu_status": "available"
-    },
-    {
-      "date": "January 29, 2026",
-      "kb": "KB5074105",
-      "builds": [
-        "26200.7705",
-        "26100.7705"
-      ],
-      "update_type": "Preview",
-      "title": "January 29, 2026—KB5074105 (OS Builds 26200.7705 and 26100.7705) Preview",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/01/january-29-2026-kb5074105-os-builds-26200-7705-and-26100-7705-preview",
-      "technical_url": "https://support.microsoft.com/en-us/help/5074105",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/1f3ba14b-3831-4dd8-8839-b63b795497e4/public/windows11.0-kb5074105-x64_74e1f93136eef7114e2bed8ff032b049ec62992a.msu",
-      "msu_status": "available"
-    },
-    {
-      "date": "January 24, 2026",
-      "kb": "KB5078127",
-      "builds": [
-        "26200.7628",
-        "26100.7628"
-      ],
-      "update_type": "Out-of-band",
-      "title": "January 24, 2026—KB5078127 (OS Builds 26200.7628 and 26100.7628) Out-of-band",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/01/january-24-2026-kb5078127-os-builds-26200-7628-and-26100-7628-out-of-band",
-      "technical_url": "https://support.microsoft.com/en-us/help/5078127",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/df3e807e-9c9c-448e-93ce-63477b39d7f9/public/windows11.0-kb5078127-x64_2669c24d8d8227e7992853d32fb4e95873bbe6bf.msu",
-      "msu_status": "available"
-    },
-    {
-      "date": "January 17, 2026",
-      "kb": "KB5077744",
-      "builds": [
-        "26200.7627",
-        "26100.7627"
-      ],
-      "update_type": "Out-of-band",
-      "title": "January 17, 2026—KB5077744 (OS Builds 26200.7627 and 26100.7627) Out-of-band",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/01/january-17-2026-kb5077744-os-builds-26200-7627-and-26100-7627-out-of-band",
-      "technical_url": "https://support.microsoft.com/en-us/help/5077744",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/aabb854a-0fe9-4caf-af00-d78fc1f8ddcb/public/windows11.0-kb5077744-x64_fb63f62e4846b81b064c3515d7aff46c9d6d50c8.msu",
-      "msu_status": "available"
-    },
-    {
-      "date": "January 13, 2026",
-      "kb": "KB5074109",
-      "builds": [
-        "26200.7623",
-        "26100.7623"
-      ],
-      "update_type": "Security / Cumulative",
-      "title": "January 13, 2026—KB5074109 (OS Builds 26200.7623 and 26100.7623)",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/01/january-13-2026-kb5074109-os-builds-26200-7623-and-26100-7623",
-      "technical_url": "https://support.microsoft.com/en-us/help/5074109",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/b7aa64b3-8441-4d36-b8f7-409f3cfeac1c/public/windows11.0-kb5074109-x64_fe29a336e6e650dda4038e82bcc0c6286c70b9a1.msu",
-      "msu_status": "available"
-    },
-    {
-      "date": "December 9, 2025",
-      "kb": "KB5072033",
-      "builds": [
-        "26200.7462",
-        "26100.7462"
-      ],
-      "update_type": "Security / Cumulative",
-      "title": "December 9, 2025—KB5072033 (OS Builds 26200.7462 and 26100.7462)",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2025/12/december-9-2025-kb5072033-os-builds-26200-7462-and-26100-7462",
-      "technical_url": "https://support.microsoft.com/en-us/help/5072033",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/9d6e2b81-b755-4e68-af73-9f4ee41cd758/public/windows11.0-kb5072033-x64_a62291f0bad9123842bf15dcdd75d807d2a2c76a.msu",
-      "msu_status": "available"
-    },
-    {
-      "date": "December 1, 2025",
-      "kb": "KB5070311",
-      "builds": [
-        "26200.7309",
-        "26100.7309"
-      ],
-      "update_type": "Preview",
-      "title": "December 1, 2025—KB5070311 (OS Builds 26200.7309 and 26100.7309) Preview",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2025/12/december-1-2025-kb5070311-os-builds-26200-7309-and-26100-7309-preview",
-      "technical_url": "https://support.microsoft.com/en-us/help/5070311",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/f441052e-a67d-4d6a-81e9-5acaddb88f58/public/windows11.0-kb5070311-x64_26ddb2f650e898decc8891401f22f0b506638572.msu",
-      "msu_status": "available"
-    },
-    {
-      "date": "November 11, 2025",
-      "kb": "KB5068861",
-      "builds": [
-        "26200.7171",
-        "26100.7171"
-      ],
-      "update_type": "Security / Cumulative",
-      "title": "November 11, 2025—KB5068861 (OS Builds 26200.7171 and 26100.7171)",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2025/11/november-11-2025-kb5068861-os-builds-26200-7171-and-26100-7171",
-      "technical_url": "https://support.microsoft.com/en-us/help/5068861",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/5315757b-0dc6-4282-a148-c7bf0b6b0e90/public/windows11.0-kb5068861-x64_acc4fe9c928835c0d44cdc0419d1867dbd2b62b2.msu",
-      "msu_status": "available"
-    },
-    {
-      "date": "October 28, 2025",
-      "kb": "KB5067036",
-      "builds": [
-        "26200.7019",
-        "26100.7019"
-      ],
-      "update_type": "Preview",
-      "title": "October 28, 2025—KB5067036 (OS Builds 26200.7019 and 26100.7019) Preview",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2025/10/october-28-2025-kb5067036-os-builds-26200-7019-and-26100-7019-preview",
-      "technical_url": "https://support.microsoft.com/en-us/help/5067036",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/191a2b93-5e38-41d5-bae3-38c73242cf96/public/windows11.0-kb5067036-x64_78c6126284e496eec36b70537a69c5f76eb07322.msu",
-      "msu_status": "available"
-    },
-    {
-      "date": "October 20, 2025",
-      "kb": "KB5070773",
-      "builds": [
-        "26200.6901",
-        "26100.6901"
-      ],
-      "update_type": "Out-of-band",
-      "title": "October 20, 2025—KB5070773 (OS Builds 26200.6901 and 26100.6901) Out-of-band",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2025/10/october-20-2025-kb5070773-os-builds-26200-6901-and-26100-6901-out-of-band",
-      "technical_url": "https://support.microsoft.com/en-us/help/5070773",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/5f9be7a2-56e4-4051-b992-2e2bb7d32db9/public/windows11.0-kb5070773-x64_b235da912270f84b761402e9511000a4f500b4ac.msu",
-      "msu_status": "available"
-    },
-    {
-      "date": "October 14, 2025",
-      "kb": "KB5066835",
-      "builds": [
-        "26200.6899",
-        "26100.6899"
-      ],
-      "update_type": "Security / Cumulative",
-      "title": "October 14, 2025—KB5066835 (OS Builds 26200.6899 and 26100.6899)",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2025/10/october-14-2025-kb5066835-os-builds-26200-6899-and-26100-6899",
-      "technical_url": "https://support.microsoft.com/en-us/help/5066835",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/7c0d1a12-9944-4b26-bed7-a722c040d631/public/windows11.0-kb5066835-x64_2f193bc50987a9c27e42eceeb90648af19cc813a.msu",
-      "msu_status": "available"
-    },
-    {
-      "date": "September 29, 2025",
-      "kb": "KB5065789",
-      "builds": [
-        "26100.6725"
-      ],
-      "update_type": "Preview",
-      "title": "September 29, 2025—KB5065789 (OS Build 26100.6725) Preview",
-      "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2025/09/september-29-2025-kb5065789-os-builds-26200-6725-and-26100-6725-preview",
-      "technical_url": "https://support.microsoft.com/en-us/help/5065789",
-      "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/7b6fed73-6e54-41bd-b9d1-315e9de95795/public/windows11.0-kb5065789-x64_e3d377d0a97a3f7efaeec8f698d3040751f7da18.msu",
-      "msu_status": "available"
+    "dev": {
+      "id": "dev",
+      "label": "Windows 11 26H2 Dev / Experimental",
+      "version": "26H2",
+      "channel": "Dev / Experimental",
+      "source_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/",
+      "count": 2,
+      "latest_id": "Build 26300.8772",
+      "updates": [
+        {
+          "id": "Build 26300.8772",
+          "date": "July 6, 2026",
+          "kb": "",
+          "builds": [
+            "26300.8772"
+          ],
+          "update_type": "Dev / Experimental",
+          "channel": "Dev / Experimental",
+          "version": "26H2",
+          "title": "Windows 11 Insider Experimental Preview Build 26300.8772",
+          "support_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26300-8772",
+          "technical_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26300-8772",
+          "msu_x64_url": "",
+          "msu_status": "not_applicable"
+        },
+        {
+          "id": "Build 26300.8697",
+          "date": "June 19, 2026",
+          "kb": "",
+          "builds": [
+            "26300.8697"
+          ],
+          "update_type": "Dev / Experimental",
+          "channel": "Dev / Experimental",
+          "version": "26H2",
+          "title": "Windows 11 Insider Experimental Preview Build 26300.8697",
+          "support_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26300-8697",
+          "technical_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26300-8697",
+          "msu_x64_url": "",
+          "msu_status": "not_applicable"
+        }
+      ]
     }
-  ]
+  }
 }
