@@ -46,7 +46,7 @@ function card(u,latest=false){
     :u.msu_x64_url
       ?`<a class="button" href="${escapeHtml(u.msu_x64_url)}" target="_blank" rel="noopener">下載 MSU x64</a>`
       :`<button class="button ghost" disabled>MSU 尚未取得</button>`;
-  const secondaryAction=isDev?'':`<a class="button secondary" href="${escapeHtml(u.technical_url)}" target="_blank" rel="noopener">技術文件</a>`;
+  const secondaryAction=isDev?'':`<a class="button secondary" href="${escapeHtml(u.technical_url)}" target="_blank" rel="noopener">查看 Release Notes</a>`;
   const title=itemLabel(u);
   const kbLine=isDev&&u.kb?`<span class="build-chip">${escapeHtml(u.kb)}</span>`:'';
   return `<article class="update-card ${latest?'latest-card':''}">
