@@ -12,7 +12,6 @@ server-rendered index.
 import re
 import sys
 import time
-from datetime import datetime
 from urllib.parse import urljoin
 
 import requests
@@ -25,8 +24,10 @@ LEARN_BUILD_URL = (
     "experimental/preview-build-{build}"
 )
 
-# Official Microsoft announcements used as resilient fallbacks. These are not
-# synthetic records: every entry must point to an official Microsoft page.
+# Every fallback must point to an official Microsoft page. These records are
+# inserted even when dynamic discovery returns unrelated or incomplete links,
+# so a known official build can never disappear merely because an index page
+# changes its rendering.
 OFFICIAL_BUILD_FALLBACKS = {
     "26300.8935": {
         "date": "July 20, 2026",
@@ -115,6 +116,7 @@ def discover_insider_links(session: requests.Session) -> list[tuple[str, str]]:
     except Exception as exc:
         print(f"warning: Insider blog discovery failed: {exc}", file=sys.stderr)
 
+    # Always include the known official builds before limiting the fetch list.
     for build, metadata in OFFICIAL_BUILD_FALLBACKS.items():
         found.setdefault(build, metadata["url"])
 
@@ -145,7 +147,7 @@ def _fallback_item(build: str) -> base.UpdateItem | None:
 def fetch_insider_history(session: requests.Session) -> list[base.UpdateItem]:
     links = discover_insider_links(session)
     updates: list[base.UpdateItem] = []
-    seen: set[str] = set()
+    seen_builds: set[str] = set()
 
     for index, (build, url) in enumerate(links[:30]):
         item: base.UpdateItem | None = None
@@ -154,10 +156,6 @@ def fetch_insider_history(session: requests.Session) -> list[base.UpdateItem]:
             page.raise_for_status()
             item = base.parse_insider_page(page.text, page.url, build)
         except Exception as exc:
-            # The Learn page for a newly announced build may lag behind the
-            # official blog or be inaccessible to the Actions runner. Preserve
-            # the official announcement instead of silently falling back to an
-            # older build.
             item = _fallback_item(build)
             if item:
                 print(
@@ -167,12 +165,24 @@ def fetch_insider_history(session: requests.Session) -> list[base.UpdateItem]:
             else:
                 print(f"warning: Insider build {build} skipped: {exc}", file=sys.stderr)
 
-        if item and item.id not in seen:
-            seen.add(item.id)
+        if item and build not in seen_builds:
+            seen_builds.add(build)
             updates.append(item)
 
         if index < min(len(links), 30) - 1:
             time.sleep(0.2)
+
+    # Critical guarantee: append every verified official build that dynamic
+    # parsing did not produce. This also protects against a list of more than 30
+    # noisy matches pushing a valid build outside the fetch window.
+    for build in OFFICIAL_BUILD_FALLBACKS:
+        if build in seen_builds:
+            continue
+        item = _fallback_item(build)
+        if item:
+            seen_builds.add(build)
+            updates.append(item)
+            print(f"info: appended verified official fallback for {build}", file=sys.stderr)
 
     if not updates:
         raise RuntimeError("No Windows 11 26H2 Dev / Experimental pages could be parsed.")
