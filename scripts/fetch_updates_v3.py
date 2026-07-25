@@ -2,16 +2,17 @@ from __future__ import annotations
 
 """Resilient Windows 11 update-history fetcher.
 
-This wrapper keeps the stable-channel implementation from fetch_updates_v2 and
-replaces only the Insider/Experimental discovery logic. Microsoft Learn's
-release-notes index does not always expose every build link in server-rendered
-HTML, so discovery also scans the Windows Insider Blog and uses verified Learn
-URLs as a final fallback.
+Stable-channel parsing and JSON output remain implemented by fetch_updates_v2.
+This wrapper improves Experimental/26H2 discovery and can build an entry from an
+official Windows Insider Blog announcement when the matching Microsoft Learn
+release-note page is temporarily missing, blocked, or not present in the
+server-rendered index.
 """
 
 import re
 import sys
 import time
+from datetime import datetime
 from urllib.parse import urljoin
 
 import requests
@@ -24,16 +25,34 @@ LEARN_BUILD_URL = (
     "experimental/preview-build-{build}"
 )
 
-# Verified official Microsoft Learn pages. This fallback prevents a temporary
-# index-page rendering change from hiding the newest known Experimental build.
-VERIFIED_BUILDS = (
-    "26300.8935",
-    "26300.8772",
-    "26300.8697",
-    "26300.8553",
-    "26300.8493",
-    "26300.8289",
-)
+# Official Microsoft announcements used as resilient fallbacks. These are not
+# synthetic records: every entry must point to an official Microsoft page.
+OFFICIAL_BUILD_FALLBACKS = {
+    "26300.8935": {
+        "date": "July 20, 2026",
+        "url": "https://blogs.windows.com/windows-insider/2026/07/20/announcing-new-builds-for-20-july-2026/",
+    },
+    "26300.8772": {
+        "date": "July 6, 2026",
+        "url": LEARN_BUILD_URL.format(build="26300-8772"),
+    },
+    "26300.8697": {
+        "date": "June 19, 2026",
+        "url": LEARN_BUILD_URL.format(build="26300-8697"),
+    },
+    "26300.8553": {
+        "date": "May 29, 2026",
+        "url": LEARN_BUILD_URL.format(build="26300-8553"),
+    },
+    "26300.8493": {
+        "date": "May 15, 2026",
+        "url": LEARN_BUILD_URL.format(build="26300-8493"),
+    },
+    "26300.8289": {
+        "date": "April 24, 2026",
+        "url": LEARN_BUILD_URL.format(build="26300-8289"),
+    },
+}
 
 BUILD_RE = re.compile(r"\b26300[.-](\d{4,5})\b", re.IGNORECASE)
 LEARN_LINK_RE = re.compile(
@@ -56,19 +75,16 @@ def _collect_builds(text: str, found: dict[str, str]) -> None:
         found[build] = LEARN_BUILD_URL.format(build=build.replace(".", "-"))
 
     for match in BUILD_RE.finditer(decoded):
-        build = f"26300.{match.group(1)}"
         revision = int(match.group(1))
-        if revision >= base.INSIDER_MIN_REVISION:
-            found.setdefault(
-                build,
-                LEARN_BUILD_URL.format(build=build.replace(".", "-")),
-            )
+        if revision < base.INSIDER_MIN_REVISION:
+            continue
+        build = f"26300.{revision}"
+        found.setdefault(build, LEARN_BUILD_URL.format(build=build.replace(".", "-")))
 
 
 def discover_insider_links(session: requests.Session) -> list[tuple[str, str]]:
     found: dict[str, str] = {}
 
-    # 1. Microsoft Learn release-notes index.
     try:
         response = session.get(base.INSIDER_INDEX_URL, headers=base.HEADERS, timeout=40)
         response.raise_for_status()
@@ -78,19 +94,18 @@ def discover_insider_links(session: requests.Session) -> list[tuple[str, str]]:
     except Exception as exc:
         print(f"warning: Learn index discovery failed: {exc}", file=sys.stderr)
 
-    # 2. Windows Insider Blog index and its recent announcement pages.
     try:
         blog = session.get(BLOG_INDEX_URL, headers=base.HEADERS, timeout=40)
         blog.raise_for_status()
         _collect_builds(blog.text, found)
 
-        announcement_urls = []
+        announcement_urls: list[str] = []
         for href in re.findall(r'href=["\']([^"\']+)["\']', blog.text, re.IGNORECASE):
             absolute = urljoin(blog.url, href)
             if "/windows-insider/2026/" in absolute and absolute not in announcement_urls:
                 announcement_urls.append(absolute)
 
-        for url in announcement_urls[:12]:
+        for url in announcement_urls[:20]:
             try:
                 page = session.get(url, headers=base.HEADERS, timeout=40)
                 page.raise_for_status()
@@ -100,25 +115,61 @@ def discover_insider_links(session: requests.Session) -> list[tuple[str, str]]:
     except Exception as exc:
         print(f"warning: Insider blog discovery failed: {exc}", file=sys.stderr)
 
-    # 3. Official verified fallback pages.
-    for build in VERIFIED_BUILDS:
-        found.setdefault(build, LEARN_BUILD_URL.format(build=build.replace(".", "-")))
+    for build, metadata in OFFICIAL_BUILD_FALLBACKS.items():
+        found.setdefault(build, metadata["url"])
 
     return sorted(found.items(), key=lambda pair: _build_sort_key(pair[0]), reverse=True)
+
+
+def _fallback_item(build: str) -> base.UpdateItem | None:
+    metadata = OFFICIAL_BUILD_FALLBACKS.get(build)
+    if not metadata:
+        return None
+
+    return base.UpdateItem(
+        id=f"Build {build}",
+        date=metadata["date"],
+        kb="",
+        builds=[build],
+        update_type="Dev / Experimental",
+        channel="Dev / Experimental",
+        version=base.INSIDER_VERSION,
+        title=f"Windows 11 Insider Experimental Preview Build {build}",
+        support_url=metadata["url"],
+        technical_url=metadata["url"],
+        msu_x64_url="",
+        msu_status="not_applicable",
+    )
 
 
 def fetch_insider_history(session: requests.Session) -> list[base.UpdateItem]:
     links = discover_insider_links(session)
     updates: list[base.UpdateItem] = []
+    seen: set[str] = set()
 
     for index, (build, url) in enumerate(links[:30]):
+        item: base.UpdateItem | None = None
         try:
             page = session.get(url, headers=base.HEADERS, timeout=40)
             page.raise_for_status()
             item = base.parse_insider_page(page.text, page.url, build)
-            updates.append(item)
         except Exception as exc:
-            print(f"warning: Insider build {build} skipped: {exc}", file=sys.stderr)
+            # The Learn page for a newly announced build may lag behind the
+            # official blog or be inaccessible to the Actions runner. Preserve
+            # the official announcement instead of silently falling back to an
+            # older build.
+            item = _fallback_item(build)
+            if item:
+                print(
+                    f"warning: using official announcement fallback for {build}: {exc}",
+                    file=sys.stderr,
+                )
+            else:
+                print(f"warning: Insider build {build} skipped: {exc}", file=sys.stderr)
+
+        if item and item.id not in seen:
+            seen.add(item.id)
+            updates.append(item)
 
         if index < min(len(links), 30) - 1:
             time.sleep(0.2)
@@ -130,8 +181,6 @@ def fetch_insider_history(session: requests.Session) -> list[base.UpdateItem]:
     return updates
 
 
-# Patch only the Insider fetcher; stable updates, JSON schema, Catalog matching,
-# caching, validation metadata, and output paths remain implemented by v2.
 base.fetch_insider_history = fetch_insider_history
 
 
