@@ -47,8 +47,31 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}
         run: python -m pytest -q
 
+      - name: Decide whether Microsoft data must be refreshed
+        id: refresh-check
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" != "push" ]; then
+            echo "refresh=true" >> "$GITHUB_OUTPUT"
+            echo "Scheduled or manual run: refresh enabled."
+            exit 0
+          fi
+
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.sha }}"
+
+          # A fetcher/workflow change needs one immediate data refresh so a parser
+          # fix is actually applied. Normal UI/README pushes only redeploy cached data.
+          if git diff --name-only "$BEFORE" "$AFTER" | grep -Eq '^scripts/fetch_updates(_v[0-9]+)?\.py$|^scripts/validate_data\.py$|^\.github/workflows/update-and-deploy\.yml$'; then
+            echo "refresh=true" >> "$GITHUB_OUTPUT"
+            echo "Fetcher or workflow changed: refresh enabled."
+          else
+            echo "refresh=false" >> "$GITHUB_OUTPUT"
+            echo "Code-only push: using existing cached data."
+          fi
+
       - name: Fetch Microsoft update history
-        if: github.event_name != 'push'
+        if: steps.refresh-check.outputs.refresh == 'true'
         env:
           PYTHONPATH: ${{ github.workspace }}
         run: python scripts/fetch_updates_v3.py
@@ -57,7 +80,7 @@ jobs:
         run: python scripts/validate_data.py
 
       - name: Commit data changes
-        if: github.event_name != 'push'
+        if: steps.refresh-check.outputs.refresh == 'true'
         shell: bash
         run: |
           if git diff --quiet -- data/updates.json docs/data/updates.json; then
