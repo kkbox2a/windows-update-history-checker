@@ -24,13 +24,16 @@ function currentChannel(){return state.data.channels[state.channel]}
 function badgeClass(type){return type==='Preview'?'preview':type==='Out-of-band'?'out-of-band':type==='Dev / Experimental'?'insider':''}
 function buildsText(u){return `OS Build${u.builds.length>1?'s':''} ${u.builds.join(' and ')}`}
 function itemLabel(u){return u.kb?`${u.date}—${u.kb}`:`${u.date}—Windows 11 Insider Preview Build ${u.builds[0]}`}
+function catalogSearchUrl(kb){return `https://www.catalog.update.microsoft.com/Search.aspx?q=${encodeURIComponent(kb||'')}`}
 
 function markdown(u){
   if(u.channel==='Dev / Experimental'||u.update_type==='Dev / Experimental'){
     const kb=u.kb?` (${u.kb})`:'';
     return `# ${u.date}—Windows 11 Insider Preview Build ${u.builds[0]}${kb}\n- Channel: Dev / Experimental\n- Version: Windows 11 ${u.version||'26H2'}\n- [Release Notes](<${u.technical_url}>)`;
   }
-  const msu=u.msu_x64_url?`- [Offline Installer (MSU, x64)](<${u.msu_x64_url}>)`:'- Offline Installer (MSU, x64): 尚未取得下載連結';
+  const msu=u.msu_x64_url
+    ?`- [Offline Installer (MSU, x64)](<${u.msu_x64_url}>)`
+    :`- [Microsoft Update Catalog](<${catalogSearchUrl(u.kb)}>) — direct MSU link pending`;
   return `# ${u.date}—${u.kb} (${buildsText(u)})${u.update_type==='Security / Cumulative'?'':` ${u.update_type}`}\n${msu}\n- [Technical Documentation](<${u.technical_url}>)`;
 }
 
@@ -46,7 +49,7 @@ function card(u,latest=false){
     ?`<a class="button" href="${escapeHtml(u.technical_url)}" target="_blank" rel="noopener">查看 Release Notes</a>`
     :u.msu_x64_url
       ?`<a class="button" href="${escapeHtml(u.msu_x64_url)}" target="_blank" rel="noopener">下載 MSU x64</a>`
-      :`<button class="button ghost" disabled>MSU 尚未取得</button>`;
+      :`<a class="button secondary" href="${escapeHtml(catalogSearchUrl(u.kb))}" target="_blank" rel="noopener">前往 Update Catalog</a>`;
   const secondaryAction=isDev?'':`<a class="button secondary" href="${escapeHtml(u.technical_url)}" target="_blank" rel="noopener">查看 Release Notes</a>`;
   const title=itemLabel(u);
   const kbLine=isDev&&u.kb?`<span class="build-chip">${escapeHtml(u.kb)}</span>`:'';
