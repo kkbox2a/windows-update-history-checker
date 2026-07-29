@@ -1,9 +1,9 @@
 {
   "schema_version": 2,
   "product": "Windows 11",
-  "generated_at": "2026-07-25T03:57:18+00:00",
-  "content_sha256": "337e9b8422a6449f3bcd61c2817f9c07add1ce455a32f8e4bd31f8d67de7703b",
-  "latest_kb": "KB5121767",
+  "generated_at": "2026-07-29T00:49:36+00:00",
+  "content_sha256": "f5d30892de6f5cdfa3d4d60707c572568cddf7f98bdd453d476d65d0a28577ce",
+  "latest_kb": "KB5101684",
   "latest_dev_build": "Build 26300.8935",
   "channels": {
     "stable": {
@@ -12,9 +12,26 @@
       "version": "25H2",
       "channel": "General Availability",
       "source_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2025/07/windows-11-version-25h2-update-history",
-      "count": 25,
-      "latest_id": "KB5121767",
+      "count": 26,
+      "latest_id": "KB5101684",
       "updates": [
+        {
+          "id": "KB5101684",
+          "date": "July 28, 2026",
+          "kb": "KB5101684",
+          "builds": [
+            "26200.8973",
+            "26100.8973"
+          ],
+          "update_type": "Preview",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "July 28, 2026—KB5101684 (OS Builds 26200.8973 and 26100.8973) Preview",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/07/july-28-2026-kb5101684-preview",
+          "technical_url": "https://support.microsoft.com/en-us/help/5101684",
+          "msu_x64_url": "",
+          "msu_status": "unavailable"
+        },
         {
           "id": "KB5121767",
           "date": "July 18, 2026",
@@ -564,5 +581,6 @@
         }
       ]
     }
-  }
+  },
+  "last_checked_at": "2026-07-29T00:49:36+00:00"
 }
