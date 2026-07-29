@@ -8,6 +8,7 @@ function normalizeData(data){
     schema_version:2,
     product:data.product||'Windows 11',
     generated_at:data.generated_at,
+    last_checked_at:data.last_checked_at||data.generated_at,
     channels:{
       stable:{
         id:'stable',label:`Windows 11 ${data.version||'25H2'}`,version:data.version||'25H2',
@@ -113,8 +114,9 @@ async function init(){
     const stableStatus=stable.latest_id
       ?`${stable.latest_id}${stableBuild?` / Build ${stableBuild}`:''}`
       :'尚無資料';
+    const checkedAt=state.data.last_checked_at||state.data.generated_at;
     $('status').className='status-card ok';
-    $('status').innerHTML=`<strong>資料已載入</strong><span>更新時間：${new Date(state.data.generated_at).toLocaleString('zh-TW')}</span><span>25H2：${escapeHtml(stableStatus)}</span><span>26H2 Dev：${escapeHtml(dev.latest_id||'尚無資料')}</span>`;
+    $('status').innerHTML=`<strong>資料已載入</strong><span>最後檢查：${new Date(checkedAt).toLocaleString('zh-TW')}</span><span>25H2：${escapeHtml(stableStatus)}</span><span>26H2 Dev：${escapeHtml(dev.latest_id||'尚無資料')}</span>`;
     switchChannel('stable');
   }catch(e){$('status').className='status-card error';$('status').textContent=`資料載入失敗：${e.message}`}
 }
