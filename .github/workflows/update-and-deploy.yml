@@ -3,8 +3,8 @@ name: Update Windows history and deploy Pages
 on:
   workflow_dispatch:
   schedule:
-    # 每週三台灣時間上午 8:30
-    - cron: "30 0 * * 3"
+    # 每週三台灣時間上午 8:37（UTC 00:37，避開常見整點尖峰）
+    - cron: "37 0 * * 3"
   push:
     branches: [main]
     paths-ignore:
@@ -57,15 +57,6 @@ jobs:
             exit 0
           fi
 
-          # Repair stale cached data immediately. Once the latest known official
-          # Experimental build is present, ordinary UI/README pushes skip crawling.
-          CURRENT_DEV=$(python -c "import json; print(json.load(open('data/updates.json', encoding='utf-8')).get('latest_dev_build',''))")
-          if [ "$CURRENT_DEV" != "Build 26300.8935" ]; then
-            echo "refresh=true" >> "$GITHUB_OUTPUT"
-            echo "Cached Dev data is stale ($CURRENT_DEV): refresh enabled."
-            exit 0
-          fi
-
           BEFORE="${{ github.event.before }}"
           AFTER="${{ github.sha }}"
           if git diff --name-only "$BEFORE" "$AFTER" | grep -Eq '^scripts/fetch_updates(_v[0-9]+)?\.py$|^scripts/validate_data\.py$|^\.github/workflows/update-and-deploy\.yml$'; then
@@ -82,19 +73,44 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}
         run: python scripts/fetch_updates_v3.py
 
-      - name: Validate generated data
-        run: python scripts/validate_data.py
-
-      - name: Verify expected Dev build
+      - name: Record last check time
         if: steps.refresh-check.outputs.refresh == 'true'
         shell: bash
         run: |
-          DEV=$(python -c "import json; print(json.load(open('data/updates.json', encoding='utf-8')).get('latest_dev_build',''))")
-          echo "Generated latest Dev build: $DEV"
-          if [ "$DEV" != "Build 26300.8935" ]; then
-            echo "Expected Build 26300.8935 but generated $DEV"
-            exit 1
-          fi
+          python - <<'PY'
+          import json
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          checked_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+          for filename in ("data/updates.json", "docs/data/updates.json"):
+              path = Path(filename)
+              data = json.loads(path.read_text(encoding="utf-8"))
+              data["last_checked_at"] = checked_at
+              path.write_text(
+                  json.dumps(data, ensure_ascii=False, indent=2) + "\n",
+                  encoding="utf-8",
+              )
+          print(f"Last check completed at {checked_at}")
+          PY
+
+      - name: Validate generated data
+        run: python scripts/validate_data.py
+
+      - name: Verify Dev data consistency
+        if: steps.refresh-check.outputs.refresh == 'true'
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+
+          data = json.load(open("data/updates.json", encoding="utf-8"))
+          dev = data["channels"]["dev"]
+          latest = dev["updates"][0]["id"]
+          assert data["latest_dev_build"] == latest
+          assert dev["latest_id"] == latest
+          print(f"Generated latest Dev build: {latest}")
+          PY
 
       - name: Commit data changes
         if: steps.refresh-check.outputs.refresh == 'true'
