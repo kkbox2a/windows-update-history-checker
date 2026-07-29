@@ -24,10 +24,6 @@ LEARN_BUILD_URL = (
     "experimental/preview-build-{build}"
 )
 
-# Every fallback must point to an official Microsoft page. These records are
-# inserted even when dynamic discovery returns unrelated or incomplete links,
-# so a known official build can never disappear merely because an index page
-# changes its rendering.
 OFFICIAL_BUILD_FALLBACKS = {
     "26300.8935": {
         "date": "July 20, 2026",
@@ -187,12 +183,33 @@ def fetch_insider_history(session: requests.Session) -> list[base.legacy.UpdateI
     return updates
 
 
+def fetch_msu_url_with_retry(session: requests.Session, kb: str) -> str:
+    """Retry Catalog lookup because a new KB can appear before its download dialog is ready."""
+    last_error: Exception | None = None
+    for attempt in range(1, 4):
+        try:
+            return base.legacy.fetch_msu_url_original(session, kb)
+        except Exception as exc:
+            last_error = exc
+            if attempt < 3:
+                delay = 5 * attempt
+                print(
+                    f"warning: {kb} MSU lookup attempt {attempt}/3 failed; retrying in {delay}s: {exc}",
+                    file=sys.stderr,
+                )
+                time.sleep(delay)
+    raise RuntimeError(f"MSU lookup failed after 3 attempts for {kb}: {last_error}")
+
+
 def main() -> int:
-    # fetch_updates_v2.main() always reassigns legacy.fetch_insider_history to its
-    # own v2 implementation. Patch the exact function it references, then call
-    # the legacy main directly so the v3 implementation is not overwritten.
     base.fetch_insider_history_resilient = fetch_insider_history
     base.legacy.fetch_insider_history = fetch_insider_history
+
+    # Preserve the original implementation once, then wrap it with bounded retries.
+    if not hasattr(base.legacy, "fetch_msu_url_original"):
+        base.legacy.fetch_msu_url_original = base.legacy.fetch_msu_url
+    base.legacy.fetch_msu_url = fetch_msu_url_with_retry
+
     return base.legacy.main()
 
 
