@@ -1,10 +1,10 @@
 {
   "schema_version": 2,
   "product": "Windows 11",
-  "generated_at": "2026-07-29T00:54:49+00:00",
-  "content_sha256": "31e0570ccbe9ae3713cbd5d959808aef6bd01d139b0750d5fd9b71748451ece3",
+  "generated_at": "2026-08-01T03:58:41+00:00",
+  "content_sha256": "9229b3c140b7fee651dcc6d90c5e878db70df56f488de2df04ae06c771ef8df6",
   "latest_kb": "KB5101684",
-  "latest_dev_build": "Build 26300.8935",
+  "latest_dev_build": "Build 26300.9032",
   "channels": {
     "stable": {
       "id": "stable",
@@ -464,9 +464,25 @@
       "version": "26H2",
       "channel": "Dev / Experimental",
       "source_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/",
-      "count": 7,
-      "latest_id": "Build 26300.8935",
+      "count": 8,
+      "latest_id": "Build 26300.9032",
       "updates": [
+        {
+          "id": "Build 26300.9032",
+          "date": "July 31, 2026",
+          "kb": "",
+          "builds": [
+            "26300.9032"
+          ],
+          "update_type": "Dev / Experimental",
+          "channel": "Dev / Experimental",
+          "version": "26H2",
+          "title": "Windows 11 Insider Experimental Preview Build 26300.9032",
+          "support_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26300-9032",
+          "technical_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26300-9032",
+          "msu_x64_url": "",
+          "msu_status": "not_applicable"
+        },
         {
           "id": "Build 26300.8935",
           "date": "July 20, 2026",
@@ -582,5 +598,5 @@
       ]
     }
   },
-  "last_checked_at": "2026-07-29T00:59:23+00:00"
+  "last_checked_at": "2026-08-01T03:58:41+00:00"
 }
