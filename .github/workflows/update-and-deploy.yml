@@ -3,8 +3,10 @@ name: Update Windows history and deploy Pages
 on:
   workflow_dispatch:
   schedule:
-    # 每週三台灣時間上午 8:37（UTC 00:37，避開常見整點尖峰）
-    - cron: "37 0 * * 3"
+    # 每週三台灣時間上午 8:47（UTC 00:47）
+    - cron: "47 0 * * 3"
+    # 備援排程：每週三台灣時間上午 9:17（UTC 01:17）
+    - cron: "17 1 * * 3"
   push:
     branches: [main]
     paths-ignore:
