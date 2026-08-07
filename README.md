@@ -1,105 +1,112 @@
 # Windows Update History Checker
 
-**🌐 English** | [繁體中文](README.zh-TW.md)
+這是一個用來整理 Windows 11 更新資訊的小型自動化專案。
 
-Windows Update History Checker is an automation project built with **Python, GitHub Actions, and GitHub Pages**.
+它會從 Microsoft 官方頁面取得更新紀錄，整理成 JSON，再由 GitHub Pages 顯示成可搜尋的網頁。目前同時追蹤 Windows 11 25H2 正式版與 26H2 Dev / Experimental Build。
 
-The project periodically retrieves the Microsoft Windows 11 25H2 update history, parses KB numbers, OS Builds, update types, and x64 MSU download links, saves the results as JSON, and deploys them as a searchable static website with Discord Markdown copy support.
+網站：
 
-## Live Site
+https://kkbox2a.github.io/windows-update-history-checker/
 
-After deployment, the site URL follows this format:
+## 目前追蹤的版本
+
+| 頻道 | 內容 | MSU |
+|---|---|---|
+| Windows 11 25H2 | 正式累積更新、Preview、Out-of-band 更新 | 嘗試取得對應的 x64 直接下載連結 |
+| Windows 11 26H2 Dev / Experimental | Windows Insider Dev / Experimental Build | 通常不提供獨立 MSU，主要保留 Build 與 Release Notes |
+
+25H2 會記錄 KB、OS Build、發布日期、更新類型、Release Notes 與 x64 MSU 下載網址。
+
+26H2 Dev / Experimental 主要記錄 Build、發布日期與 Microsoft 官方公告連結。
+
+## 資料來源
+
+本專案只使用 Microsoft 官方來源：
+
+- Microsoft Support：Windows 11 正式版更新歷程
+- Microsoft Update Catalog：x64 MSU 套件資訊
+- Microsoft Learn：Windows Insider / Experimental Release Notes
+- Windows Insider Blog：Dev Build 官方公告與備援來源
+
+MSU 解析時會檢查目標 KB 與架構，避免把 ARM64、checkpoint package 或同一 Catalog 項目中的其他套件當成 x64 下載檔。
+
+## 執行流程
+
+資料更新大致分成五個步驟：
+
+1. GitHub Actions 啟動更新工作。
+2. Python 抓取 Microsoft 官方資料。
+3. 驗證 KB、Build、頻道與輸出格式。
+4. 將結果寫入 `data/updates.json` 與 `docs/data/updates.json`。
+5. GitHub Pages 重新部署網站。
+
+主要抓取入口為：
 
 ```text
-https://<GitHub-account>.github.io/windows-update-history-checker/
+scripts/fetch_updates_v3.py
 ```
 
-## System Architecture
+產生的兩份 JSON 用途不同：
 
 ```text
-Microsoft Support / Update Catalog
-                │
-                ▼
-       scripts/fetch_updates.py
-                │
-                ▼
-     data/updates.json
-     docs/data/updates.json
-                │
-                ▼
-          GitHub Pages
+data/updates.json
 ```
 
-Component responsibilities:
+保留在 Repository 中，方便版本追蹤與其他程式讀取。
 
-- **Microsoft Support**: provides Windows 11 25H2 update history, KB numbers, Builds, and update types.
-- **Microsoft Update Catalog**: provides x64 MSU download information for the corresponding KB.
-- **Python fetcher**: downloads, parses, organizes, and exports JSON data.
-- **GitHub Actions**: handles testing, fetching, validation, commits, and Pages deployment.
-- **GitHub Pages**: provides the static web interface.
+```text
+docs/data/updates.json
+```
 
-## Main Features
+由 GitHub Pages 前端直接載入。
 
-- Parses the latest and historical Windows 11 25H2 updates.
-- Extracts release dates, KB numbers, OS Builds, Preview, and Out-of-band types.
-- Finds the x64 MSU direct download link matching the selected KB.
-- Avoids selecting checkpoint packages or other KB packages from the same Catalog item.
-- Displays the latest release and historical update list.
-- Supports searching and filtering by KB, Build, date, and update type.
-- Provides one-click Discord Markdown copying.
-- Uses `<URL>` syntax in Markdown links to prevent Discord link preview cards.
-- Creates an automatic commit only when update data actually changes.
-- Preserves every data change in Git commit history.
+## 網站功能
 
-## GitHub Actions Workflow
+網頁目前提供：
 
-Workflow file:
+- 25H2 正式版與 26H2 Dev / Experimental 頻道切換
+- KB、Build、日期與更新類型搜尋
+- 最新版本與歷史版本瀏覽
+- 25H2 x64 MSU 直接下載
+- MSU 尚未取得時前往 Microsoft Update Catalog 搜尋
+- 開啟 Microsoft Release Notes
+- 複製單筆更新的 Markdown 內容
+- 顯示最後一次完整檢查時間
+
+## 自動更新
+
+Workflow 位於：
 
 ```text
 .github/workflows/update-and-deploy.yml
 ```
 
-### Triggers
+目前有三種觸發方式：
 
-The workflow currently supports:
+- 手動：從 Actions 頁面執行 `Run workflow`
+- Push：程式或網站檔案變更時執行測試與部署
+- 排程：每週三執行兩次，第二次作為備援
 
-- **Scheduled run**: every Wednesday at 08:30 Taiwan time.
-- **Manual run**: click `Run workflow` from the GitHub Actions page.
-- **Push to main**: runs tests and redeploys when files other than the generated JSON data are changed.
+台灣時間排程：
 
-The schedule is expressed in UTC:
+```text
+08:47
+09:17
+```
+
+對應 UTC cron：
 
 ```yaml
 schedule:
-  - cron: "30 0 * * 3"
+  - cron: "47 0 * * 3"
+  - cron: "17 1 * * 3"
 ```
 
-### Execution Flow
+GitHub Actions 的 scheduled workflow 不保證在指定分鐘立即開始，因此實際啟動時間可能稍有延遲。
 
-1. Check out the latest `main` branch.
-2. Set up Python 3.12.
-3. Install `requirements.txt` dependencies and pytest.
-4. Run parser tests.
-5. Run `scripts/fetch_updates.py` to retrieve Microsoft data.
-6. Run `scripts/validate_data.py` to validate the output.
-7. Compare `data/updates.json` and `docs/data/updates.json`.
-8. Automatically commit and push to `main` when data changes.
-9. Package `docs/` as a GitHub Pages artifact.
-10. Deploy to GitHub Pages.
+每次完整檢查完成後，`last_checked_at` 都會更新。即使 Microsoft 當週沒有發布新 KB 或新 Build，也可以從網站上的最後檢查時間確認排程是否真的執行過。
 
-Automatic commits use the GitHub Actions Bot:
-
-```text
-github-actions[bot]
-```
-
-Commit message format:
-
-```text
-data: refresh Windows 11 25H2 history (KBxxxxxxx)
-```
-
-## Project Structure
+## Repository 結構
 
 ```text
 .
@@ -107,21 +114,18 @@ data: refresh Windows 11 25H2 history (KBxxxxxxx)
 │  └─ workflows/
 │     └─ update-and-deploy.yml
 ├─ scripts/
-│  ├─ __init__.py
 │  ├─ fetch_updates.py
+│  ├─ fetch_updates_v2.py
+│  ├─ fetch_updates_v3.py
 │  └─ validate_data.py
 ├─ tests/
-│  ├─ __init__.py
-│  └─ test_parser.py
 ├─ data/
 │  └─ updates.json
 ├─ docs/
 │  ├─ index.html
 │  ├─ style.css
 │  ├─ app.js
-│  ├─ .nojekyll
 │  ├─ assets/
-│  │  └─ app_icon.png
 │  └─ data/
 │     └─ updates.json
 ├─ requirements.txt
@@ -129,143 +133,91 @@ data: refresh Windows 11 25H2 history (KBxxxxxxx)
 └─ LICENSE
 ```
 
-## Data Output
+## 本機測試
 
-Fetched results are written to two locations:
+建議使用 Python 3.12。
 
-```text
-data/updates.json
-```
-
-Used for version control, data inspection, and external program access.
-
-```text
-docs/data/updates.json
-```
-
-Used by the GitHub Pages frontend.
-
-Both files should contain identical data.
-
-Example data structure:
-
-```json
-{
-  "last_checked": "2026-07-24T00:30:00Z",
-  "latest_kb": "KB5121767",
-  "updates": [
-    {
-      "date": "July 18, 2026",
-      "kb": "KB5121767",
-      "builds": [
-        "26200.8894",
-        "26100.8894"
-      ],
-      "update_type": "Out-of-band",
-      "msu_x64": "https://catalog.sf.dl.delivery.mp.microsoft.com/...",
-      "technical_documentation": "https://support.microsoft.com/en-us/help/5121767"
-    }
-  ]
-}
-```
-
-## Local Development
-
-### Requirements
-
-- Python 3.12 or a compatible version
-- Git
-
-### Create an Environment
+建立虛擬環境：
 
 ```bash
 python -m venv .venv
 ```
 
-Windows:
+Windows：
 
 ```bat
 .venv\Scripts\activate
 ```
 
-Linux / macOS:
-
-```bash
-source .venv/bin/activate
-```
-
-Install dependencies:
+安裝依賴：
 
 ```bash
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt pytest
 ```
 
-### Run Tests
+執行測試：
 
 ```bash
 python -m pytest -q
 ```
 
-### Fetch Data Manually
+手動重新抓取資料：
 
 ```bash
-python scripts/fetch_updates.py
+python scripts/fetch_updates_v3.py
 ```
 
-### Validate JSON
+驗證輸出：
 
 ```bash
 python scripts/validate_data.py
 ```
 
-### Start the Local Website
+在本機啟動網站：
 
 ```bash
 python -m http.server 8000 --directory docs
 ```
 
-Open in a browser:
+接著開啟：
 
 ```text
 http://localhost:8000
 ```
 
-Do not open `docs/index.html` directly by double-clicking it, because browser local-file security restrictions may block JavaScript from loading the JSON file.
+不建議直接雙擊 `docs/index.html`，因為瀏覽器對 `file://` 的限制可能使 JavaScript 無法讀取 JSON。
 
-## Deployment Configuration
+## 維護時需要注意的地方
 
-### GitHub Pages
+Microsoft 網頁並不是固定 API，部分資料仍需解析網站內容。因此 Microsoft Support、Update Catalog、Learn 或 Insider Blog 改版時，抓取規則可能需要同步調整。
 
-Open the repository settings:
+特別需要注意以下幾項：
 
-```text
-Settings → Pages → Build and deployment → Source
-```
+- KB 與 OS Build 的解析格式
+- Preview / Out-of-band 類型判斷
+- Dev Build 的排序與官方公告來源
+- Update Catalog 搜尋結果中的 x64 / ARM64 架構
+- MSU 下載視窗中的實際檔名與 KB
+- Microsoft 頁面暫時無法存取時的備援資料
 
-Select:
+如果 MSU 直接連結暫時無法取得，更新紀錄仍會保留，網站會改提供 Microsoft Update Catalog 搜尋入口，不會因單一下載網址失敗而丟失整筆更新資訊。
 
-```text
-GitHub Actions
-```
+## GitHub Pages 設定
 
-### Workflow Permissions
-
-GitHub Actions must be able to commit the updated JSON files back to the repository.
-
-Open:
+Repository 的 Pages Source 應設為：
 
 ```text
-Settings → Actions → General → Workflow permissions
+Settings → Pages → Build and deployment → GitHub Actions
 ```
 
-Select:
+Actions 需要寫回 JSON，因此 Workflow permissions 應允許讀寫：
 
 ```text
-Read and write permissions
+Settings → Actions → General → Workflow permissions → Read and write permissions
 ```
 
-The workflow uses these permissions:
+Workflow 使用的主要權限：
 
 ```yaml
 permissions:
@@ -274,101 +226,6 @@ permissions:
   id-token: write
 ```
 
-## Run a Deployment Manually
-
-1. Open the repository's `Actions` tab.
-2. Select `Update Windows history and deploy Pages`.
-3. Click `Run workflow`.
-4. Select the `main` branch.
-5. Wait until every step shows a green check mark.
-
-The main steps should include:
-
-```text
-Run parser tests
-Fetch Microsoft update history
-Validate generated data
-Commit data changes
-Configure Pages
-Upload Pages artifact
-Deploy Pages
-```
-
-## Development Notes
-
-### Microsoft Page Structure
-
-The fetcher depends on the HTML structure of Microsoft Support and Microsoft Update Catalog. If Microsoft changes either site, the following parts may require updates:
-
-- Update title parsing
-- KB and Build extraction
-- Preview / Out-of-band detection
-- Catalog search-result parsing
-- MSU download URL parsing
-
-### MSU Link Matching
-
-A single Update Catalog item may contain multiple MSU packages, such as checkpoint packages or prerequisite updates.
-
-The program must verify that the KB number in the MSU filename exactly matches the target KB. It must not simply select the first x64 link returned by the download window.
-
-### Git Push Conflicts
-
-The workflow may update `main` at the same time as a manual commit. The current workflow handles this by:
-
-1. Fetching the latest remote branch.
-2. Rebasing onto `origin/main`.
-3. Retrying the push up to three times if necessary.
-
-Before pushing local changes, it is still recommended to run:
-
-```bash
-git pull --rebase origin main
-```
-
-Then run:
-
-```bash
-git push
-```
-
-### No Data Changes
-
-If the Microsoft update data has not changed, the workflow does not create an empty commit, but it still redeploys the current `docs/` content.
-
-### Schedule Delays
-
-GitHub Actions scheduled workflows are not guaranteed to start at the exact configured minute. Delays of several minutes can occur when the platform is busy.
-
-## Troubleshooting
-
-### Workflow Cannot Push
-
-Verify that:
-
-```text
-Settings → Actions → General → Workflow permissions
-```
-
-is set to `Read and write permissions`.
-
-### Pages Deployment Succeeds but the Site Has Not Updated
-
-- Wait a few minutes and refresh the page.
-- Perform a hard refresh with `Ctrl + F5`.
-- Confirm that `docs/data/updates.json` was updated.
-- Confirm that `Deploy Pages` succeeded in the latest Actions run.
-
-### MSU Link Is Missing
-
-Possible causes:
-
-- Microsoft Catalog is temporarily unavailable.
-- The KB does not yet provide an x64 MSU package.
-- The Catalog HTML or download-window format has changed.
-
-The update-history record is still preserved, and the frontend can indicate that the MSU link is not yet available.
-
 ## License
 
-See [LICENSE](LICENSE).
+授權內容請參閱 [LICENSE](LICENSE)。
