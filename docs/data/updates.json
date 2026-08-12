@@ -1,9 +1,9 @@
 {
   "schema_version": 2,
   "product": "Windows 11",
-  "generated_at": "2026-08-01T03:58:41+00:00",
-  "content_sha256": "9229b3c140b7fee651dcc6d90c5e878db70df56f488de2df04ae06c771ef8df6",
-  "latest_kb": "KB5101684",
+  "generated_at": "2026-08-12T03:12:52+00:00",
+  "content_sha256": "3ec349bf8e37c7112124c78e3ad4e97a351e40a80d55444e43aeb7cc81b3237c",
+  "latest_kb": "KB5121003",
   "latest_dev_build": "Build 26300.9032",
   "channels": {
     "stable": {
@@ -12,9 +12,26 @@
       "version": "25H2",
       "channel": "General Availability",
       "source_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2025/07/windows-11-version-25h2-update-history",
-      "count": 26,
-      "latest_id": "KB5101684",
+      "count": 27,
+      "latest_id": "KB5121003",
       "updates": [
+        {
+          "id": "KB5121003",
+          "date": "August 11, 2026",
+          "kb": "KB5121003",
+          "builds": [
+            "26200.9168",
+            "26100.9168"
+          ],
+          "update_type": "Security / Cumulative",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "August 11, 2026—KB5121003 (OS Builds 26200.9168 and 26100.9168)",
+          "support_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2026/08/kb5121003-windows-11-24h2-25h2-security-update",
+          "technical_url": "https://support.microsoft.com/en-us/help/5121003",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/dbc14d78-9837-4fb2-afbc-75d6663bf1e5/public/windows11.0-kb5121003-x64_dc58f03fef04b4c611e0db0ab3fadfb301194113.msu",
+          "msu_status": "available"
+        },
         {
           "id": "KB5101684",
           "date": "July 28, 2026",
@@ -598,5 +615,5 @@
       ]
     }
   },
-  "last_checked_at": "2026-08-05T01:29:15+00:00"
+  "last_checked_at": "2026-08-12T03:12:52+00:00"
 }
