@@ -494,7 +494,7 @@
     },
     "dev": {
       "id": "dev",
-      "label": "Windows 11 26H2 Dev / Experimental",
+      "label": "Windows Insider Experimental",
       "version": "26H2",
       "channel": "Experimental",
       "source_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/",
@@ -584,5 +584,5 @@
       ]
     }
   },
-  "last_checked_at": "2026-09-03T00:21:32+00:00"
+  "last_checked_at": "2026-09-03T00:23:09+00:00"
 }
