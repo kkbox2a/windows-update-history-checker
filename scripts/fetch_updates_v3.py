@@ -3,18 +3,20 @@ from __future__ import annotations
 """Resilient Windows 11 update-history fetcher.
 
 Stable-channel parsing and JSON output remain implemented by fetch_updates_v2.
-This wrapper improves Experimental/26H2 discovery and can build an entry from an
-official Windows Insider Blog announcement when the matching Microsoft Learn
-release-note page is temporarily missing, blocked, or not present in the
-server-rendered index.
+This wrapper discovers the current Windows Insider Experimental builds from
+Microsoft Learn and the Windows Insider Blog without assuming a fixed build
+prefix such as 26300. This allows the tracker to follow Experimental as it
+moves to newer build series such as 26340.
 """
 
 import re
 import sys
 import time
+from dataclasses import asdict
 from urllib.parse import urljoin
 
 import requests
+from bs4 import BeautifulSoup
 
 from scripts import fetch_updates_v2 as base
 
@@ -24,37 +26,33 @@ LEARN_BUILD_URL = (
     "experimental/preview-build-{build}"
 )
 
+# Verified official pages used only when discovery temporarily fails.
 OFFICIAL_BUILD_FALLBACKS = {
+    "26340.9233": {
+        "date": "August 21, 2026",
+        "url": LEARN_BUILD_URL.format(build="26340-9233"),
+    },
+    "26340.9212": {
+        "date": "August 17, 2026",
+        "url": LEARN_BUILD_URL.format(build="26340-9212"),
+    },
+    "26300.9032": {
+        "date": "July 31, 2026",
+        "url": LEARN_BUILD_URL.format(build="26300-9032"),
+    },
     "26300.8935": {
         "date": "July 20, 2026",
         "url": "https://blogs.windows.com/windows-insider/2026/07/20/announcing-new-builds-for-20-july-2026/",
     },
-    "26300.8772": {
-        "date": "July 6, 2026",
-        "url": LEARN_BUILD_URL.format(build="26300-8772"),
-    },
-    "26300.8697": {
-        "date": "June 19, 2026",
-        "url": LEARN_BUILD_URL.format(build="26300-8697"),
-    },
-    "26300.8553": {
-        "date": "May 29, 2026",
-        "url": LEARN_BUILD_URL.format(build="26300-8553"),
-    },
-    "26300.8493": {
-        "date": "May 15, 2026",
-        "url": LEARN_BUILD_URL.format(build="26300-8493"),
-    },
-    "26300.8289": {
-        "date": "April 24, 2026",
-        "url": LEARN_BUILD_URL.format(build="26300-8289"),
-    },
 }
 
-BUILD_RE = re.compile(r"\b26300[.-](\d{4,5})\b", re.IGNORECASE)
 LEARN_LINK_RE = re.compile(
     r"https?://learn\.microsoft\.com/(?:[a-z]{2}-[a-z]{2}/)?"
-    r"windows-insider/release-notes/experimental/preview-build-26300-(\d{4,5})",
+    r"windows-insider/release-notes/experimental/preview-build-(\d{5})-(\d{4,5})",
+    re.IGNORECASE,
+)
+EXPERIMENTAL_TEXT_RE = re.compile(
+    r"\bExperimental\s*:\s*Build\s+(\d{5})[.-](\d{4,5})\b",
     re.IGNORECASE,
 )
 
@@ -64,19 +62,24 @@ def _build_sort_key(build: str) -> tuple[int, int]:
     return int(major), int(revision)
 
 
-def _collect_builds(text: str, found: dict[str, str]) -> None:
+def _learn_url(build: str) -> str:
+    return LEARN_BUILD_URL.format(build=build.replace(".", "-"))
+
+
+def _collect_learn_links(text: str, found: dict[str, str]) -> None:
     decoded = text.replace("\\/", "/").replace("\\u002F", "/")
-
     for match in LEARN_LINK_RE.finditer(decoded):
-        build = f"26300.{match.group(1)}"
-        found[build] = LEARN_BUILD_URL.format(build=build.replace(".", "-"))
+        build = f"{match.group(1)}.{match.group(2)}"
+        found[build] = _learn_url(build)
 
-    for match in BUILD_RE.finditer(decoded):
-        revision = int(match.group(1))
-        if revision < base.legacy.INSIDER_MIN_REVISION:
-            continue
-        build = f"26300.{revision}"
-        found.setdefault(build, LEARN_BUILD_URL.format(build=build.replace(".", "-")))
+
+def _collect_experimental_from_blog(text: str, found: dict[str, str]) -> None:
+    # Parse rendered text so Beta / Experimental (26H1) / Future Platforms are
+    # not accidentally collected as the main Experimental channel.
+    plain = BeautifulSoup(text, "html.parser").get_text(" ", strip=True)
+    for match in EXPERIMENTAL_TEXT_RE.finditer(plain):
+        build = f"{match.group(1)}.{match.group(2)}"
+        found.setdefault(build, _learn_url(build))
 
 
 def discover_insider_links(session: requests.Session) -> list[tuple[str, str]]:
@@ -85,16 +88,15 @@ def discover_insider_links(session: requests.Session) -> list[tuple[str, str]]:
     try:
         response = session.get(base.legacy.INSIDER_INDEX_URL, headers=base.legacy.HEADERS, timeout=40)
         response.raise_for_status()
-        _collect_builds(response.text, found)
-        for build, url in base.legacy.extract_insider_links(response.text, response.url):
-            found[build] = url
+        _collect_learn_links(response.text, found)
     except Exception as exc:
-        print(f"warning: Learn index discovery failed: {exc}", file=sys.stderr)
+        print(f"warning: Learn Experimental discovery failed: {exc}", file=sys.stderr)
 
     try:
         blog = session.get(BLOG_INDEX_URL, headers=base.legacy.HEADERS, timeout=40)
         blog.raise_for_status()
-        _collect_builds(blog.text, found)
+        _collect_learn_links(blog.text, found)
+        _collect_experimental_from_blog(blog.text, found)
 
         announcement_urls: list[str] = []
         for href in re.findall(r'href=["\']([^"\']+)["\']', blog.text, re.IGNORECASE):
@@ -106,7 +108,8 @@ def discover_insider_links(session: requests.Session) -> list[tuple[str, str]]:
             try:
                 page = session.get(url, headers=base.legacy.HEADERS, timeout=40)
                 page.raise_for_status()
-                _collect_builds(page.text, found)
+                _collect_learn_links(page.text, found)
+                _collect_experimental_from_blog(page.text, found)
             except Exception as exc:
                 print(f"warning: Insider blog page skipped: {url}: {exc}", file=sys.stderr)
     except Exception as exc:
@@ -116,6 +119,14 @@ def discover_insider_links(session: requests.Session) -> list[tuple[str, str]]:
         found.setdefault(build, metadata["url"])
 
     return sorted(found.items(), key=lambda pair: _build_sort_key(pair[0]), reverse=True)
+
+
+def _as_experimental(item: base.legacy.UpdateItem) -> base.legacy.UpdateItem:
+    values = asdict(item)
+    values["update_type"] = "Experimental"
+    values["channel"] = "Experimental"
+    values["version"] = "26H2"
+    return base.legacy.UpdateItem(**values)
 
 
 def _fallback_item(build: str) -> base.legacy.UpdateItem | None:
@@ -128,9 +139,9 @@ def _fallback_item(build: str) -> base.legacy.UpdateItem | None:
         date=metadata["date"],
         kb="",
         builds=[build],
-        update_type="Dev / Experimental",
-        channel="Dev / Experimental",
-        version=base.legacy.INSIDER_VERSION,
+        update_type="Experimental",
+        channel="Experimental",
+        version="26H2",
         title=f"Windows 11 Insider Experimental Preview Build {build}",
         support_url=metadata["url"],
         technical_url=metadata["url"],
@@ -149,7 +160,7 @@ def fetch_insider_history(session: requests.Session) -> list[base.legacy.UpdateI
         try:
             page = session.get(url, headers=base.legacy.HEADERS, timeout=40)
             page.raise_for_status()
-            item = base.legacy.parse_insider_page(page.text, page.url, build)
+            item = _as_experimental(base.legacy.parse_insider_page(page.text, page.url, build))
         except Exception as exc:
             item = _fallback_item(build)
             if item:
@@ -158,7 +169,7 @@ def fetch_insider_history(session: requests.Session) -> list[base.legacy.UpdateI
                     file=sys.stderr,
                 )
             else:
-                print(f"warning: Insider build {build} skipped: {exc}", file=sys.stderr)
+                print(f"warning: Experimental build {build} skipped: {exc}", file=sys.stderr)
 
         if item and build not in seen_builds:
             seen_builds.add(build)
@@ -177,7 +188,7 @@ def fetch_insider_history(session: requests.Session) -> list[base.legacy.UpdateI
             print(f"info: appended verified official fallback for {build}", file=sys.stderr)
 
     if not updates:
-        raise RuntimeError("No Windows 11 26H2 Dev / Experimental pages could be parsed.")
+        raise RuntimeError("No Windows Insider Experimental pages could be parsed.")
 
     updates.sort(key=lambda item: _build_sort_key(item.builds[0]), reverse=True)
     return updates
@@ -205,7 +216,6 @@ def main() -> int:
     base.fetch_insider_history_resilient = fetch_insider_history
     base.legacy.fetch_insider_history = fetch_insider_history
 
-    # Preserve the original implementation once, then wrap it with bounded retries.
     if not hasattr(base.legacy, "fetch_msu_url_original"):
         base.legacy.fetch_msu_url_original = base.legacy.fetch_msu_url
     base.legacy.fetch_msu_url = fetch_msu_url_with_retry
