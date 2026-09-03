@@ -2,7 +2,7 @@
 
 這是一個用來整理 Windows 11 更新資訊的小型自動化專案。
 
-它會從 Microsoft 官方頁面取得更新紀錄，整理成 JSON，再由 GitHub Pages 顯示成可搜尋的網頁。目前同時追蹤 Windows 11 25H2 正式版與 26H2 Dev / Experimental Build。
+它會從 Microsoft 官方頁面取得更新紀錄，整理成 JSON，再由 GitHub Pages 顯示成可搜尋的網頁。目前追蹤 Windows 11 最新 H2 正式版，以及 Windows Insider Experimental Build。
 
 網站：
 
@@ -12,12 +12,14 @@ https://kkbox2a.github.io/windows-update-history-checker/
 
 | 頻道 | 內容 | MSU |
 |---|---|---|
-| Windows 11 25H2 | 正式累積更新、Preview、Out-of-band 更新 | 嘗試取得對應的 x64 直接下載連結 |
-| Windows 11 26H2 Dev / Experimental | Windows Insider Dev / Experimental Build | 通常不提供獨立 MSU，主要保留 Build 與 Release Notes |
+| Windows 11 正式版 | 自動辨識目前最新 H2 正式版的累積更新、Preview、Out-of-band 更新 | 嘗試取得對應的 x64 直接下載連結 |
+| Windows Insider Experimental | Experimental Build | 通常不提供獨立 MSU，主要保留 Build 與 Release Notes |
 
-25H2 會記錄 KB、OS Build、發布日期、更新類型、Release Notes 與 x64 MSU 下載網址。
+正式版不再固定綁定 25H2 或 26200 Build。程式會從 Microsoft Support 自動尋找目前最新的 Windows 11 H2 更新歷程頁面，因此當主流正式版由 25H2 移至 26H2 時，可自動切換到新的版本與 Build 系列。
 
-26H2 Dev / Experimental 主要記錄 Build、發布日期與 Microsoft 官方公告連結。
+目前 25H2 仍會記錄 KB、OS Build、發布日期、更新類型、Release Notes 與 x64 MSU 下載網址；未來 26H2 正式版上線後會使用相同方式處理。
+
+Experimental 也不綁定固定 Build prefix，會依 Microsoft Learn 的 Experimental Release Notes 自動追蹤目前的 Build 系列。
 
 ## 資料來源
 
@@ -26,7 +28,7 @@ https://kkbox2a.github.io/windows-update-history-checker/
 - Microsoft Support：Windows 11 正式版更新歷程
 - Microsoft Update Catalog：x64 MSU 套件資訊
 - Microsoft Learn：Windows Insider / Experimental Release Notes
-- Windows Insider Blog：Dev Build 官方公告與備援來源
+- Windows Insider Blog：Experimental Build 官方公告與備援來源
 
 MSU 解析時會檢查目標 KB 與架構，避免把 ARM64、checkpoint package 或同一 Catalog 項目中的其他套件當成 x64 下載檔。
 
@@ -64,10 +66,11 @@ docs/data/updates.json
 
 網頁目前提供：
 
-- 25H2 正式版與 26H2 Dev / Experimental 頻道切換
+- Windows 11 最新正式版與 Windows Insider Experimental 頻道切換
+- 正式版版本自動辨識，例如 25H2 → 26H2
 - KB、Build、日期與更新類型搜尋
 - 最新版本與歷史版本瀏覽
-- 25H2 x64 MSU 直接下載
+- 正式版 x64 MSU 直接下載
 - MSU 尚未取得時前往 Microsoft Update Catalog 搜尋
 - 開啟 Microsoft Release Notes
 - 複製單筆更新的 Markdown 內容
@@ -192,11 +195,14 @@ http://localhost:8000
 
 Microsoft 網頁並不是固定 API，部分資料仍需解析網站內容。因此 Microsoft Support、Update Catalog、Learn 或 Insider Blog 改版時，抓取規則可能需要同步調整。
 
+正式版的版本辨識會優先尋找較新的 H2 更新歷程頁面。若 Microsoft 尚未建立新年度 H2 頁面，程式會繼續使用上一個可用的 H2 正式版本，不會因為年份改變就誤切換。
+
 特別需要注意以下幾項：
 
+- Microsoft Support 的 Windows 版本與更新歷程網址格式
 - KB 與 OS Build 的解析格式
 - Preview / Out-of-band 類型判斷
-- Dev Build 的排序與官方公告來源
+- Experimental Build 的排序與官方公告來源
 - Update Catalog 搜尋結果中的 x64 / ARM64 架構
 - MSU 下載視窗中的實際檔名與 KB
 - Microsoft 頁面暫時無法存取時的備援資料
