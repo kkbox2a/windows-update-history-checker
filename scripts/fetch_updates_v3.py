@@ -9,10 +9,12 @@ prefix such as 26300. This allows the tracker to follow Experimental as it
 moves to newer build series such as 26340.
 """
 
+import json
 import re
 import sys
 import time
 from dataclasses import asdict
+from pathlib import Path
 from urllib.parse import urljoin
 
 import requests
@@ -212,17 +214,20 @@ def fetch_msu_url_with_retry(session: requests.Session, kb: str) -> str:
     raise RuntimeError(f"MSU lookup failed after 3 attempts for {kb}: {last_error}")
 
 
-def channel_payload_experimental(
-    channel_id: str,
-    label: str,
-    source_url: str,
-    updates: list[base.legacy.UpdateItem],
-) -> dict:
-    # Keep the internal channel id "dev" for backward compatibility, but expose
-    # Microsoft's current public channel name instead of the historical label.
-    if channel_id == "dev":
-        label = "Windows Insider Experimental"
-    return base.legacy.channel_payload_original(channel_id, label, source_url, updates)
+def _persist_experimental_metadata() -> None:
+    # The legacy writer compares update arrays only, so a label-only change would
+    # otherwise not be written. Normalize metadata after the fetch completes.
+    for path in (base.legacy.DATA_FILE, base.legacy.WEB_DATA_FILE):
+        file_path = Path(path)
+        data = json.loads(file_path.read_text(encoding="utf-8"))
+        dev = data.get("channels", {}).get("dev")
+        if dev:
+            dev["label"] = "Windows Insider Experimental"
+            dev["channel"] = "Experimental"
+        file_path.write_text(
+            json.dumps(data, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
 
 
 def main() -> int:
@@ -233,11 +238,9 @@ def main() -> int:
         base.legacy.fetch_msu_url_original = base.legacy.fetch_msu_url
     base.legacy.fetch_msu_url = fetch_msu_url_with_retry
 
-    if not hasattr(base.legacy, "channel_payload_original"):
-        base.legacy.channel_payload_original = base.legacy.channel_payload
-    base.legacy.channel_payload = channel_payload_experimental
-
-    return base.legacy.main()
+    result = base.legacy.main()
+    _persist_experimental_metadata()
+    return result
 
 
 if __name__ == "__main__":
