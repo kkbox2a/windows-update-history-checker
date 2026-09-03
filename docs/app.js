@@ -15,21 +15,22 @@ function normalizeData(data){
         channel:'General Availability',count:data.count||data.updates?.length||0,
         latest_id:data.latest_kb||data.updates?.[0]?.kb||'',updates:data.updates||[]
       },
-      dev:{id:'dev',label:'Windows 11 26H2 Dev / Experimental',version:'26H2',channel:'Dev / Experimental',count:0,latest_id:'',updates:[]}
+      dev:{id:'dev',label:'Windows Insider Experimental',version:'26H2',channel:'Experimental',count:0,latest_id:'',updates:[]}
     }
   };
 }
 
 function currentChannel(){return state.data.channels[state.channel]}
-function badgeClass(type){return type==='Preview'?'preview':type==='Out-of-band'?'out-of-band':type==='Dev / Experimental'?'insider':''}
+function badgeClass(type){return type==='Preview'?'preview':type==='Out-of-band'?'out-of-band':(type==='Experimental'||type==='Dev / Experimental')?'insider':''}
 function buildsText(u){return `OS Build${u.builds.length>1?'s':''} ${u.builds.join(' and ')}`}
 function itemLabel(u){return u.kb?`${u.date}—${u.kb}`:`${u.date}—Windows 11 Insider Preview Build ${u.builds[0]}`}
 function catalogSearchUrl(kb){return `https://www.catalog.update.microsoft.com/Search.aspx?q=${encodeURIComponent(kb||'')}`}
+function isExperimental(u){return state.channel==='dev'||u.channel==='Experimental'||u.channel==='Dev / Experimental'||u.update_type==='Experimental'||u.update_type==='Dev / Experimental'}
 
 function markdown(u){
-  if(u.channel==='Dev / Experimental'||u.update_type==='Dev / Experimental'){
+  if(isExperimental(u)){
     const kb=u.kb?` (${u.kb})`:'';
-    return `# ${u.date}—Windows 11 Insider Preview Build ${u.builds[0]}${kb}\n- Channel: Dev / Experimental\n- Version: Windows 11 ${u.version||'26H2'}\n- [Release Notes](<${u.technical_url}>)`;
+    return `# ${u.date}—Windows 11 Insider Experimental Preview Build ${u.builds[0]}${kb}\n- Channel: Experimental\n- Version: Windows 11 ${u.version||'26H2'}\n- [Release Notes](<${u.technical_url}>)`;
   }
   const msu=u.msu_x64_url
     ?`- [Offline Installer (MSU, x64)](<${u.msu_x64_url}>)`
@@ -44,15 +45,15 @@ async function copyText(text,label='已複製'){
 function toast(text){const t=$('toast');t.textContent=text;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),1900)}
 
 function card(u,latest=false){
-  const isDev=u.channel==='Dev / Experimental'||u.update_type==='Dev / Experimental';
-  const primaryAction=isDev
+  const experimental=isExperimental(u);
+  const primaryAction=experimental
     ?`<a class="button" href="${escapeHtml(u.technical_url)}" target="_blank" rel="noopener">查看 Release Notes</a>`
     :u.msu_x64_url
       ?`<a class="button" href="${escapeHtml(u.msu_x64_url)}" target="_blank" rel="noopener">下載 MSU x64</a>`
       :`<a class="button secondary" href="${escapeHtml(catalogSearchUrl(u.kb))}" target="_blank" rel="noopener">前往 Update Catalog</a>`;
-  const secondaryAction=isDev?'':`<a class="button secondary" href="${escapeHtml(u.technical_url)}" target="_blank" rel="noopener">查看 Release Notes</a>`;
+  const secondaryAction=experimental?'':`<a class="button secondary" href="${escapeHtml(u.technical_url)}" target="_blank" rel="noopener">查看 Release Notes</a>`;
   const title=itemLabel(u);
-  const kbLine=isDev&&u.kb?`<span class="build-chip">${escapeHtml(u.kb)}</span>`:'';
+  const kbLine=experimental&&u.kb?`<span class="build-chip">${escapeHtml(u.kb)}</span>`:'';
   return `<article class="update-card ${latest?'latest-card':''}">
     <div class="card-top">
       <div>
@@ -71,7 +72,7 @@ function bindCopyButtons(){document.querySelectorAll('.copy-md').forEach(btn=>bt
 function updateTypeOptions(){
   const select=$('type-filter');
   if(state.channel==='dev'){
-    select.innerHTML='<option value="all">全部 Dev / Experimental</option>';
+    select.innerHTML='<option value="all">全部 Experimental</option>';
     select.disabled=true;
   }else{
     select.innerHTML='<option value="all">全部類型</option><option value="Security / Cumulative">正式更新</option><option value="Preview">Preview</option><option value="Out-of-band">Out-of-band</option>';
@@ -90,8 +91,8 @@ function render(){
   $('result-count').textContent=`顯示 ${state.visible.length} / ${channel.updates.length} 筆更新`;
   $('updates').innerHTML=state.visible.length?state.visible.map(u=>card(u)).join(''):'<div class="empty">找不到符合條件的更新。</div>';
   const latest=channel.updates[0];
-  $('latest-heading').textContent=state.channel==='dev'?'最新 Dev / Experimental Build':'目前最新正式版本';
-  $('archive-heading').textContent=state.channel==='dev'?'26H2 Dev / Experimental 歷史 Build':'25H2 過往版本';
+  $('latest-heading').textContent=state.channel==='dev'?'最新 Experimental Build':'目前最新正式版本';
+  $('archive-heading').textContent=state.channel==='dev'?'Experimental 歷史 Build':'25H2 過往版本';
   if(latest){$('latest-section').classList.remove('hidden');$('latest-card').innerHTML=card(latest,true)}else{$('latest-section').classList.add('hidden');$('latest-card').innerHTML=''}
   bindCopyButtons();
 }
@@ -119,7 +120,7 @@ async function init(){
       :'尚無資料';
     const checkedAt=state.data.last_checked_at||state.data.generated_at;
     $('status').className='status-card ok';
-    $('status').innerHTML=`<strong>資料已載入</strong><span>最後檢查：${new Date(checkedAt).toLocaleString('zh-TW')}</span><span>25H2：${escapeHtml(stableStatus)}</span><span>26H2 Dev：${escapeHtml(dev.latest_id||'尚無資料')}</span>`;
+    $('status').innerHTML=`<strong>資料已載入</strong><span>最後檢查：${new Date(checkedAt).toLocaleString('zh-TW')}</span><span>25H2：${escapeHtml(stableStatus)}</span><span>Experimental：${escapeHtml(dev.latest_id||'尚無資料')}</span>`;
     switchChannel('stable');
   }catch(e){$('status').className='status-card error';$('status').textContent=`資料載入失敗：${e.message}`}
 }
