@@ -30,6 +30,8 @@ for item in stable["updates"]:
     stable_seen.add(item["id"])
     if item["msu_x64_url"]:
         assert item["kb"].lower() in item["msu_x64_url"].lower()
+        assert "x64" in item["msu_x64_url"].lower()
+        assert "arm64" not in item["msu_x64_url"].lower()
 
 assert dev["version"] == "26H2"
 assert dev["count"] == len(dev["updates"])
@@ -39,9 +41,12 @@ assert dev["latest_id"] == dev["updates"][0]["id"]
 dev_seen = set()
 for item in dev["updates"]:
     assert item["builds"]
-    assert all(build.startswith("26300.") for build in item["builds"])
+    # Experimental can move to a new build family (26300 -> 26340 -> future),
+    # so validate the Windows build format instead of a fixed prefix.
+    assert all(re.fullmatch(r"\d{5}\.\d{4,5}", build) for build in item["builds"])
     assert item["version"] == "26H2"
-    assert item["update_type"] == "Dev / Experimental"
+    assert item["update_type"] == "Experimental"
+    assert item["channel"] == "Experimental"
     assert item["technical_url"].startswith((
         "https://learn.microsoft.com/",
         "https://blogs.windows.com/windows-insider/",
@@ -52,6 +57,6 @@ for item in dev["updates"]:
 
 assert data["latest_dev_build"] == dev["latest_id"]
 print(
-    f"validated stable={len(stable_seen)} and dev={len(dev_seen)} records; "
-    f"latest_dev={data['latest_dev_build']}"
+    f"validated stable={len(stable_seen)} and Experimental={len(dev_seen)} records; "
+    f"latest_experimental={data['latest_dev_build']}"
 )
