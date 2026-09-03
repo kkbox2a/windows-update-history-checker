@@ -91,8 +91,8 @@ function render(){
   $('result-count').textContent=`顯示 ${state.visible.length} / ${channel.updates.length} 筆更新`;
   $('updates').innerHTML=state.visible.length?state.visible.map(u=>card(u)).join(''):'<div class="empty">找不到符合條件的更新。</div>';
   const latest=channel.updates[0];
-  $('latest-heading').textContent=state.channel==='dev'?'最新 Experimental Build':'目前最新正式版本';
-  $('archive-heading').textContent=state.channel==='dev'?'Experimental 歷史 Build':'25H2 過往版本';
+  $('latest-heading').textContent=state.channel==='dev'?'最新 Experimental Build':`目前最新 ${channel.version||''} 正式版本`.trim();
+  $('archive-heading').textContent=state.channel==='dev'?'Experimental 歷史 Build':`${channel.version||'Windows 11'} 過往版本`;
   if(latest){$('latest-section').classList.remove('hidden');$('latest-card').innerHTML=card(latest,true)}else{$('latest-section').classList.add('hidden');$('latest-card').innerHTML=''}
   bindCopyButtons();
 }
@@ -114,13 +114,15 @@ async function init(){
     const stable=state.data.channels.stable;
     const dev=state.data.channels.dev;
     const stableLatest=stable.updates?.[0];
-    const stableBuild=stableLatest?.builds?.find(build=>String(build).startsWith('26200.'))||stableLatest?.builds?.[0]||'';
+    const stableBuild=stableLatest?.builds?.[0]||'';
     const stableStatus=stable.latest_id
       ?`${stable.latest_id}${stableBuild?` / Build ${stableBuild}`:''}`
       :'尚無資料';
     const checkedAt=state.data.last_checked_at||state.data.generated_at;
+    const stableTab=$('stable-tab-title');
+    if(stableTab)stableTab.textContent=`Windows 11 ${stable.version||''}`.trim();
     $('status').className='status-card ok';
-    $('status').innerHTML=`<strong>資料已載入</strong><span>最後檢查：${new Date(checkedAt).toLocaleString('zh-TW')}</span><span>25H2：${escapeHtml(stableStatus)}</span><span>Experimental：${escapeHtml(dev.latest_id||'尚無資料')}</span>`;
+    $('status').innerHTML=`<strong>資料已載入</strong><span>最後檢查：${new Date(checkedAt).toLocaleString('zh-TW')}</span><span>${escapeHtml(stable.version||'正式版')}：${escapeHtml(stableStatus)}</span><span>Experimental：${escapeHtml(dev.latest_id||'尚無資料')}</span>`;
     switchChannel('stable');
   }catch(e){$('status').className='status-card error';$('status').textContent=`資料載入失敗：${e.message}`}
 }
