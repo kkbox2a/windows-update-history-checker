@@ -11,7 +11,7 @@
       "label": "Windows 11 25H2",
       "version": "25H2",
       "channel": "General Availability",
-      "source_url": "https://support.microsoft.com/en-US/servicing/os/windows-11/2025/07/windows-11-version-25h2-update-history",
+      "source_url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2025/07/windows-11-version-25h2-update-history",
       "count": 28,
       "latest_id": "KB5120998",
       "updates": [
@@ -584,5 +584,5 @@
       ]
     }
   },
-  "last_checked_at": "2026-09-03T00:23:09+00:00"
+  "last_checked_at": "2026-09-03T00:34:51+00:00"
 }
