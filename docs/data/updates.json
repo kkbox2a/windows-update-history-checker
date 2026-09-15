@@ -1,10 +1,10 @@
 {
   "schema_version": 2,
   "product": "Windows 11",
-  "generated_at": "2026-09-09T05:20:00+00:00",
-  "content_sha256": "a5d1b159b843a1000078470cfc97b7bf5a41797b266b5d7ec3ada28871d7d677",
-  "latest_kb": "KB5124008",
-  "latest_dev_build": "Build 26340.9354",
+  "generated_at": "2026-09-15T07:26:02+00:00",
+  "content_sha256": "6bac7471fc766be895121012a7e065c9f529b8397c09d3d191f057d1f40c398b",
+  "latest_kb": "KB5129195",
+  "latest_dev_build": "Build 26340.9482",
   "channels": {
     "stable": {
       "id": "stable",
@@ -12,9 +12,26 @@
       "version": "25H2",
       "channel": "General Availability",
       "source_url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2025/07/windows-11-version-25h2-update-history",
-      "count": 29,
-      "latest_id": "KB5124008",
+      "count": 30,
+      "latest_id": "KB5129195",
       "updates": [
+        {
+          "id": "KB5129195",
+          "date": "September 14, 2026",
+          "kb": "KB5129195",
+          "builds": [
+            "26200.9457",
+            "26100.9457"
+          ],
+          "update_type": "Out-of-band",
+          "channel": "General Availability",
+          "version": "25H2",
+          "title": "September 14, 2026—KB5129195 (OS Builds 26200.9457 and 26100.9457) Out-of-band",
+          "support_url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2026/09/kb5129195-windows-11-24h2-25h2-security-update",
+          "technical_url": "https://support.microsoft.com/en-us/help/5129195",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/471c8f54-b9fc-491d-9944-234d5db009f0/public/windows11.0-kb5129195-x64_ed361878ec2b56a7dfdb8f256565263a7fdc8eaa.msu",
+          "msu_status": "available"
+        },
         {
           "id": "KB5124008",
           "date": "September 8, 2026",
@@ -515,9 +532,25 @@
       "version": "26H2",
       "channel": "Experimental",
       "source_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/",
-      "count": 5,
-      "latest_id": "Build 26340.9354",
+      "count": 6,
+      "latest_id": "Build 26340.9482",
       "updates": [
+        {
+          "id": "Build 26340.9482",
+          "date": "September 11, 2026",
+          "kb": "",
+          "builds": [
+            "26340.9482"
+          ],
+          "update_type": "Experimental",
+          "channel": "Experimental",
+          "version": "26H2",
+          "title": "Windows 11 Insider Experimental Preview Build 26340.9482",
+          "support_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26340-9482",
+          "technical_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26340-9482",
+          "msu_x64_url": "",
+          "msu_status": "not_applicable"
+        },
         {
           "id": "Build 26340.9354",
           "date": "September 8, 2026",
@@ -593,13 +626,13 @@
           "channel": "Experimental",
           "version": "26H2",
           "title": "Windows 11 Insider Experimental Preview Build 26300.8935",
-          "support_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26300-8935",
-          "technical_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26300-8935",
+          "support_url": "https://blogs.windows.com/windows-insider/2026/07/20/announcing-new-builds-for-20-july-2026/",
+          "technical_url": "https://blogs.windows.com/windows-insider/2026/07/20/announcing-new-builds-for-20-july-2026/",
           "msu_x64_url": "",
           "msu_status": "not_applicable"
         }
       ]
     }
   },
-  "last_checked_at": "2026-09-09T06:02:28+00:00"
+  "last_checked_at": "2026-09-15T07:26:03+00:00"
 }
