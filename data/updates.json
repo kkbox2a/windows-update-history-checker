@@ -1,10 +1,10 @@
 {
   "schema_version": 2,
   "product": "Windows 11",
-  "generated_at": "2026-09-30T06:00:33+00:00",
-  "content_sha256": "87790539f590f51e462463fa0bc0f9ce24f74c7444ccefbe4b7b96d231a92b2c",
-  "latest_kb": "KB5124010",
-  "latest_dev_build": "Build 26340.9577",
+  "generated_at": "2026-10-14T05:27:56+00:00",
+  "content_sha256": "41532de5269adf6409bd543b4946983bd47e088e2a7a9c1e8474a22b875f9dcb",
+  "latest_kb": "KB5127648",
+  "latest_dev_build": "Build 26340.9616",
   "channels": {
     "stable": {
       "id": "stable",
@@ -12,9 +12,27 @@
       "version": "26H2",
       "channel": "General Availability",
       "source_url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2026/09/windows-11-version-26h2-update-history",
-      "count": 1,
-      "latest_id": "KB5124010",
+      "count": 2,
+      "latest_id": "KB5127648",
       "updates": [
+        {
+          "id": "KB5127648",
+          "date": "October 13, 2026",
+          "kb": "KB5127648",
+          "builds": [
+            "26300.9711",
+            "26200.9711",
+            "26100.9711"
+          ],
+          "update_type": "Security / Cumulative",
+          "channel": "General Availability",
+          "version": "26H2",
+          "title": "October 13, 2026—KB5127648 (OS Builds 26300.9711, 26200.9711 and 26100.9711)",
+          "support_url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2026/10/kb5127648-windows-11-24h2-25h2-26h2-security-update",
+          "technical_url": "https://support.microsoft.com/en-us/help/5127648",
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/4225b261-8248-43e5-a808-34f3faafe3f6/public/windows11.0-kb5127648-x64_2b88d2d308adc938fcd4d2876a68ee0b2a3c4c09.msu",
+          "msu_status": "available"
+        },
         {
           "id": "KB5124010",
           "date": "September 22, 2026",
@@ -41,9 +59,25 @@
       "version": "26H2",
       "channel": "Experimental",
       "source_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/",
-      "count": 8,
-      "latest_id": "Build 26340.9577",
+      "count": 9,
+      "latest_id": "Build 26340.9616",
       "updates": [
+        {
+          "id": "Build 26340.9616",
+          "date": "October 7, 2026",
+          "kb": "",
+          "builds": [
+            "26340.9616"
+          ],
+          "update_type": "Experimental",
+          "channel": "Experimental",
+          "version": "26H2",
+          "title": "Windows 11 Insider Experimental Preview Build 26340.9616",
+          "support_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26340-9616",
+          "technical_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26340-9616",
+          "msu_x64_url": "",
+          "msu_status": "not_applicable"
+        },
         {
           "id": "Build 26340.9577",
           "date": "September 25, 2026",
@@ -175,5 +209,5 @@
       ]
     }
   },
-  "last_checked_at": "2026-10-07T07:17:44+00:00"
+  "last_checked_at": "2026-10-14T05:27:56+00:00"
 }
