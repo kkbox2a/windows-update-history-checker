@@ -1,10 +1,10 @@
 {
   "schema_version": 2,
   "product": "Windows 11",
-  "generated_at": "2026-10-14T05:27:56+00:00",
-  "content_sha256": "41532de5269adf6409bd543b4946983bd47e088e2a7a9c1e8474a22b875f9dcb",
+  "generated_at": "2026-10-21T05:21:24+00:00",
+  "content_sha256": "7b9965e227c725b386eca444ac6ec34d196de3d3444cbe9b4ddaeba19ddb73d9",
   "latest_kb": "KB5127648",
-  "latest_dev_build": "Build 26340.9616",
+  "latest_dev_build": "Build 26340.9750",
   "channels": {
     "stable": {
       "id": "stable",
@@ -59,9 +59,25 @@
       "version": "26H2",
       "channel": "Experimental",
       "source_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/",
-      "count": 9,
-      "latest_id": "Build 26340.9616",
+      "count": 11,
+      "latest_id": "Build 26340.9750",
       "updates": [
+        {
+          "id": "Build 26340.9750",
+          "date": "October 16, 2026",
+          "kb": "",
+          "builds": [
+            "26340.9750"
+          ],
+          "update_type": "Experimental",
+          "channel": "Experimental",
+          "version": "26H2",
+          "title": "Windows 11 Insider Experimental Preview Build 26340.9750",
+          "support_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26340-9750",
+          "technical_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26340-9750",
+          "msu_x64_url": "",
+          "msu_status": "not_applicable"
+        },
         {
           "id": "Build 26340.9616",
           "date": "October 7, 2026",
@@ -75,6 +91,22 @@
           "title": "Windows 11 Insider Experimental Preview Build 26340.9616",
           "support_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26340-9616",
           "technical_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26340-9616",
+          "msu_x64_url": "",
+          "msu_status": "not_applicable"
+        },
+        {
+          "id": "Build 26340.9596",
+          "date": "October 2, 2026",
+          "kb": "",
+          "builds": [
+            "26340.9596"
+          ],
+          "update_type": "Experimental",
+          "channel": "Experimental",
+          "version": "26H2",
+          "title": "Windows 11 Insider Experimental Preview Build 26340.9596",
+          "support_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26340-9596",
+          "technical_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26340-9596",
           "msu_x64_url": "",
           "msu_status": "not_applicable"
         },
@@ -209,5 +241,5 @@
       ]
     }
   },
-  "last_checked_at": "2026-10-14T06:12:15+00:00"
+  "last_checked_at": "2026-10-21T05:21:24+00:00"
 }
