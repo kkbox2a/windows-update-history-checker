@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
   "product": "Windows 11",
-  "generated_at": "2026-10-28T06:20:22+00:00",
-  "content_sha256": "8d36b43494ecff25b7d325d8bbd56d75bc1a9f2e31e025420462516d5e1900a9",
+  "generated_at": "2026-10-28T06:53:21+00:00",
+  "content_sha256": "472d0c9c771210f16911ab37dba54ee3456c6d03ec015c462ceb257d1ab78d57",
   "latest_kb": "KB5134133",
   "latest_dev_build": "Build 26340.9767",
   "channels": {
@@ -30,8 +30,8 @@
           "title": "October 26, 2026—KB5134133 (OS Builds 26300.9725, 26200.9725 and 26100.9725) Out-of-band",
           "support_url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2026/10/kb5134133-windows-11-24h2-25h2-26h2-update",
           "technical_url": "https://support.microsoft.com/en-us/help/5134133",
-          "msu_x64_url": "",
-          "msu_status": "unavailable"
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/37e2df4b-2f39-44bf-b7d7-c75ae43cf4c8/public/windows11.0-kb5134133-x64_0e59d2f988a5422dfb489e97faed3b3835fc7568.msu",
+          "msu_status": "available"
         },
         {
           "id": "KB5127648",
@@ -275,5 +275,5 @@
       ]
     }
   },
-  "last_checked_at": "2026-10-28T06:20:22+00:00"
+  "last_checked_at": "2026-10-28T06:53:21+00:00"
 }
