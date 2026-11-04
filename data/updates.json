@@ -1,10 +1,10 @@
 {
   "schema_version": 2,
   "product": "Windows 11",
-  "generated_at": "2026-10-29T12:23:03+00:00",
-  "content_sha256": "3af64b227630014d4a1eaffbaafc5afdb77ab3d1c89bd345c52d3b7bc0571708",
+  "generated_at": "2026-11-04T06:59:41+00:00",
+  "content_sha256": "9ae2d8d9adff82bc5e12555bcf92a30bffd9517a7a2d2ff5f3988e0ae5f8776d",
   "latest_kb": "KB5127936",
-  "latest_dev_build": "Build 26340.9767",
+  "latest_dev_build": "Build 26340.9843",
   "channels": {
     "stable": {
       "id": "stable",
@@ -94,9 +94,25 @@
       "version": "26H2",
       "channel": "Experimental",
       "source_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/",
-      "count": 12,
-      "latest_id": "Build 26340.9767",
+      "count": 13,
+      "latest_id": "Build 26340.9843",
       "updates": [
+        {
+          "id": "Build 26340.9843",
+          "date": "October 30, 2026",
+          "kb": "",
+          "builds": [
+            "26340.9843"
+          ],
+          "update_type": "Experimental",
+          "channel": "Experimental",
+          "version": "26H2",
+          "title": "Windows 11 Insider Experimental Preview Build 26340.9843",
+          "support_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26340-9843",
+          "technical_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26340-9843",
+          "msu_x64_url": "",
+          "msu_status": "not_applicable"
+        },
         {
           "id": "Build 26340.9767",
           "date": "October 23, 2026",
@@ -292,5 +308,5 @@
       ]
     }
   },
-  "last_checked_at": "2026-10-29T12:23:03+00:00"
+  "last_checked_at": "2026-11-04T06:59:41+00:00"
 }
