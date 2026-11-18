@@ -1,10 +1,10 @@
 {
   "schema_version": 2,
   "product": "Windows 11",
-  "generated_at": "2026-11-11T00:04:11+00:00",
-  "content_sha256": "8d98f71270beaf0de6b8f9264dc88ed5bf9fb50589cdce029c69dee5738f6762",
+  "generated_at": "2026-11-18T01:16:49+00:00",
+  "content_sha256": "15ea32f3956df896aa06e38b32a3d681b5eb892771314596f07f1cdaf73521b1",
   "latest_kb": "KB5132061",
-  "latest_dev_build": "Build 26340.9882",
+  "latest_dev_build": "Build 26340.10013",
   "channels": {
     "stable": {
       "id": "stable",
@@ -113,8 +113,24 @@
       "channel": "Experimental",
       "source_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/",
       "count": 13,
-      "latest_id": "Build 26340.9882",
+      "latest_id": "Build 26340.10013",
       "updates": [
+        {
+          "id": "Build 26340.10013",
+          "date": "November 16, 2026",
+          "kb": "",
+          "builds": [
+            "26340.10013"
+          ],
+          "update_type": "Experimental",
+          "channel": "Experimental",
+          "version": "26H2",
+          "title": "Windows 11 Insider Experimental Preview Build 26340.10013",
+          "support_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26340-10013",
+          "technical_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26340-10013",
+          "msu_x64_url": "",
+          "msu_status": "not_applicable"
+        },
         {
           "id": "Build 26340.9882",
           "date": "November 6, 2026",
@@ -244,22 +260,6 @@
           "msu_status": "not_applicable"
         },
         {
-          "id": "Build 26340.9482",
-          "date": "September 11, 2026",
-          "kb": "",
-          "builds": [
-            "26340.9482"
-          ],
-          "update_type": "Experimental",
-          "channel": "Experimental",
-          "version": "26H2",
-          "title": "Windows 11 Insider Experimental Preview Build 26340.9482",
-          "support_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26340-9482",
-          "technical_url": "https://learn.microsoft.com/en-us/windows-insider/release-notes/experimental/preview-build-26340-9482",
-          "msu_x64_url": "",
-          "msu_status": "not_applicable"
-        },
-        {
           "id": "Build 26340.9233",
           "date": "August 21, 2026",
           "kb": "",
@@ -326,5 +326,5 @@
       ]
     }
   },
-  "last_checked_at": "2026-11-11T07:46:56+00:00"
+  "last_checked_at": "2026-11-18T01:16:50+00:00"
 }
