@@ -245,6 +245,7 @@ def fetch_stable_history(session: requests.Session) -> list[base.legacy.UpdateIt
         raise RuntimeError(f"No Windows 11 {version} update entries were parsed.")
 
     CURRENT_STABLE_VERSION = version
+    base.legacy.STABLE_VERSION = version
     CURRENT_STABLE_SOURCE_URL = source_url
     print(f"info: current stable release discovered as Windows 11 {version}", file=sys.stderr)
     return updates
