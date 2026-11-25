@@ -231,30 +231,38 @@ def fetch_insider_history(session: requests.Session) -> list[UpdateItem]:
     return updates
 
 
-def find_catalog_update_id(html: str, kb: str, target_version: str = STABLE_VERSION) -> str:
+def catalog_candidates(html: str, kb: str, target_version: str) -> list[str]:
     soup = BeautifulSoup(html, "html.parser")
     preferred: list[tuple[int, str]] = []
     for row in soup.find_all("tr"):
-        text = normalize_text(row.get_text(" ", strip=True))
-        lower = text.lower()
-        if kb.lower() not in lower or "x64-based systems" not in lower:
+        lower = normalize_text(row.get_text(" ", strip=True)).lower()
+        if not re.search(rf"\b{re.escape(kb.lower())}\b", lower):
             continue
-        score = 0
-        if f"version {target_version.lower()}" in lower:
-            score += 100
-        if "cumulative update" in lower:
-            score += 25
-        if "dynamic update" in lower or "servicing stack" in lower or "arm64" in lower:
-            score -= 80
-        guids = re.findall(
-            r"([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})",
-            str(row),
-        )
-        preferred.extend((score, guid.lower()) for guid in guids)
-    if not preferred:
+        if not re.search(r"\bx64[\s-]+based\s+systems?\b|\bx64\b", lower):
+            continue
+        if re.search(r"\barm64\b|\bdynamic update\b|\bservicing stack\b|\.net|server", lower):
+            continue
+        if "cumulative update" not in lower:
+            continue
+        if not re.search(rf"\bversion\s+{re.escape(target_version.lower())}\b", lower):
+            continue
+        # Prefer the actual download button ID rather than unrelated GUIDs.
+        ids = []
+        for node in row.find_all(["input", "button"]):
+            value = str(node.get("id", ""))
+            if re.fullmatch(r"[0-9a-fA-F-]{36}", value):
+                ids.append(value)
+        if not ids:
+            ids = re.findall(r"\b[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}\b", str(row))
+        preferred.extend((100, guid.lower()) for guid in ids)
+    return list(dict.fromkeys(guid for _, guid in preferred))
+
+
+def find_catalog_update_id(html: str, kb: str, target_version: str | None = None) -> str:
+    candidates = catalog_candidates(html, kb, target_version or STABLE_VERSION)
+    if not candidates:
         raise RuntimeError(f"Catalog entry not found for {kb}")
-    preferred.sort(key=lambda value: value[0], reverse=True)
-    return preferred[0][1]
+    return candidates[0]
 
 
 def url_matches_kb(url: str, kb: str) -> bool:
@@ -262,32 +270,54 @@ def url_matches_kb(url: str, kb: str) -> bool:
     return bool(re.search(rf"(?:^|[-_])kb{re.escape(number)}(?:[-_.]|$)", url, re.I))
 
 
+def is_x64_msu_url(url: str, kb: str) -> bool:
+    from urllib.parse import urlsplit
+    parsed = urlsplit(url)
+    filename = parsed.path.rsplit("/", 1)[-1].lower()
+    return (
+        parsed.scheme.lower() in ("http", "https")
+        and (parsed.hostname or "").lower().endswith(".delivery.mp.microsoft.com")
+        and filename.endswith(".msu")
+        and url_matches_kb(filename, kb)
+        and bool(re.search(r"[-_]x64[-_.]", filename))
+        and "arm64" not in filename
+    )
+
+
 def extract_msu_url(html: str, kb: str) -> str:
     decoded = html.replace(r"\/", "/").replace(r"\u0026", "&")
     urls = re.findall(r"https?://[^\"'<>\\\s]+?\.msu(?:\?[^\"'<>\\\s]*)?", decoded, re.I)
-    clean = [url.replace("&amp;", "&") for url in urls]
-    exact = [url for url in clean if url_matches_kb(url, kb)]
-    for url in exact:
-        lower = url.lower()
-        if "x64" in lower and "arm64" not in lower:
-            return url
-    if exact:
-        return exact[0]
-    raise RuntimeError(f"Direct MSU URL for {kb} was not found in Catalog dialog")
+    for url in urls:
+        url = url.replace("&amp;", "&")
+        if is_x64_msu_url(url, kb):
+            return re.sub(r"^http:", "https:", url, flags=re.I)
+    raise RuntimeError(f"Exact x64 MSU URL for {kb} was not found in Catalog dialog")
 
 
 def fetch_msu_url(session: requests.Session, kb: str) -> str:
-    search = session.get(CATALOG_SEARCH_URL.format(kb), headers=HEADERS, timeout=40)
-    search.raise_for_status()
-    update_id = find_catalog_update_id(search.text, kb)
-    dialog = session.post(
-        CATALOG_DOWNLOAD_URL,
-        headers={**HEADERS, "Referer": search.url},
-        data={"updateIDs": json.dumps([{"size": 0, "updateID": update_id, "uidInfo": update_id}])},
-        timeout=40,
-    )
-    dialog.raise_for_status()
-    return extract_msu_url(dialog.text, kb)
+    from urllib.parse import quote_plus
+    errors = []
+    # A KB-only search can temporarily return no rows; try a qualified query
+    # and then the release-wide listing, always filtering to the exact KB.
+    queries = (kb, f"{kb} Windows 11 x64", f"Windows 11, version {STABLE_VERSION} for x64-based Systems")
+    for query in queries:
+        try:
+            search = session.get(CATALOG_SEARCH_URL.format(quote_plus(query)), headers=HEADERS, timeout=40)
+            search.raise_for_status()
+            update_id = find_catalog_update_id(search.text, kb)
+            dialog = session.post(
+                CATALOG_DOWNLOAD_URL,
+                headers={**HEADERS, "Referer": search.url},
+                data={"updateIDs": json.dumps([{"size": 0, "updateID": update_id, "uidInfo": update_id}])},
+                timeout=40,
+            )
+            dialog.raise_for_status()
+            url = extract_msu_url(dialog.text, kb)
+            print(f"info: {kb} x64 MSU resolved using Catalog query {query!r}")
+            return url
+        except (requests.RequestException, RuntimeError) as exc:
+            errors.append(f"{query}: {exc}")
+    raise RuntimeError("; ".join(errors))
 
 
 def load_existing() -> dict[str, Any]:
@@ -317,7 +347,7 @@ def enrich_stable(session: requests.Session, parsed: list[UpdateItem], old_chann
     for index, item in enumerate(parsed):
         old = old_by_id.get(item.id, {})
         cached_url = old.get("msu_x64_url", "")
-        if cached_url and url_matches_kb(cached_url, item.kb):
+        if cached_url and is_x64_msu_url(cached_url, item.kb):
             msu_url = cached_url
             status = "available"
         else:
