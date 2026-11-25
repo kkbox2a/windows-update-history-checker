@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
   "product": "Windows 11",
-  "generated_at": "2026-11-25T09:14:15+00:00",
-  "content_sha256": "ab6a9e7ada2032e02df3ed92ef3226f0ca6a6a7b66d79cbee58883d88ee5a0be",
+  "generated_at": "2026-11-25T09:54:10+00:00",
+  "content_sha256": "7e4a414dde08cd89c47db9913b0644f78b7f8eb7873e54a5a73338fb421c31a2",
   "latest_kb": "KB5132057",
   "latest_dev_build": "Build 26340.10032",
   "channels": {
@@ -29,8 +29,8 @@
           "title": "November 19, 2026—KB5132057 (OS Builds 26300.10075 and 26200.10075) Preview",
           "support_url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2026/11/kb5132057-windows-11-25h2-26h2-update",
           "technical_url": "https://support.microsoft.com/en-us/help/5132057",
-          "msu_x64_url": "",
-          "msu_status": "unavailable"
+          "msu_x64_url": "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/1b9e8131-8078-4e85-9ddd-0610a6441e33/public/windows11.0-kb5132057-x64_ed1098ec42ade595190d4af1134f9ea60cd242ca.msu",
+          "msu_status": "available"
         },
         {
           "id": "KB5132061",
@@ -343,5 +343,5 @@
       ]
     }
   },
-  "last_checked_at": "2026-11-25T09:16:15+00:00"
+  "last_checked_at": "2026-11-25T09:54:10+00:00"
 }
