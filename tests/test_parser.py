@@ -59,3 +59,26 @@ def test_insider_page_parser():
     assert item.version == "26H2"
     assert item.update_type == "Dev / Experimental"
     assert item.msu_status == "not_applicable"
+
+
+
+def test_msu_rejects_arm64_and_checkpoint():
+    import pytest
+    html = """
+    https://catalog.sf.dl.delivery.mp.microsoft.com/files/windows11.0-kb5132057-arm64_a.msu
+    https://catalog.sf.dl.delivery.mp.microsoft.com/files/windows11.0-kb5124010-x64_b.msu
+    """
+    with pytest.raises(RuntimeError):
+        extract_msu_url(html, "KB5132057")
+
+
+def test_catalog_selects_exact_version_and_architecture():
+    from scripts.fetch_updates import find_catalog_update_id
+    html = """
+    <table>
+      <tr><td>Cumulative Update for Windows 11, version 25H2 for x64-based Systems (KB5132057)</td><td><input id="11111111-1111-1111-1111-111111111111"></td></tr>
+      <tr><td>Cumulative Update for Windows 11, version 26H2 for arm64-based Systems (KB5132057)</td><td><input id="22222222-2222-2222-2222-222222222222"></td></tr>
+      <tr><td>Cumulative Update Preview for Windows 11, version 26H2 for x64-based Systems (KB5132057)</td><td><input id="33333333-3333-3333-3333-333333333333"></td></tr>
+    </table>
+    """
+    assert find_catalog_update_id(html, "KB5132057", "26H2") == "33333333-3333-3333-3333-333333333333"
